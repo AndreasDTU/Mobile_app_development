@@ -52,6 +52,11 @@ fun simplenav() {
                     label = { Text("Details") },
                     icon = {}
                 )
+                NavigationBarItem(
+                    selected = currentRoute == "MyFriendsScreen",
+                    onClick = { navController.navigate("MyFriendsScreen") },
+                    label = { Text("Friends") },
+                    icon = {} )
             }
         }
     ) { innerPadding ->
@@ -66,6 +71,10 @@ fun simplenav() {
                 val id = navBackStackEntry.arguments?.getInt("id") ?:0
                 Log.d("Id","Id: $id")
                 MovieDetailScreen(id, navController, MovieDetailViewModel(id, MovieRepository()))
+            }
+            // My Friends Screen
+            composable("MyFriendsScreen") {
+                MyFriendsScreen()
             }
         }
     }
