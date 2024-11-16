@@ -28,6 +28,7 @@ import com.example.movieapp.ui.screen.FirstTimeScreen
 import com.example.movieapp.ui.screen.LogInScreen
 import com.example.movieapp.ui.screen.SignUpScreen
 import com.example.movieapp.ui.screen.MovieDetailScreen
+import com.example.movieapp.ui.screen.MyFriendsScreen
 import com.example.movieapp.viewmodels.MovieDetailViewModel
 import com.example.movieapp.viewmodels.MovieViewModel
 
