@@ -59,7 +59,9 @@ fun simplenav() {
                     selected = currentRoute == "MyFriendsScreen",
                     onClick = { navController.navigate("MyFriendsScreen") },
                     label = { Text("Friends") },
-
+                    icon = {}
+                )
+                NavigationBarItem(
                     selected = currentRoute == "MyListScreen",
                     onClick = { navController.navigate("MyListScreen") },
                     label = { Text("My List") },
