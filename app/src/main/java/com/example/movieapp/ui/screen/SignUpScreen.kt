@@ -50,11 +50,6 @@ fun SignUpScreen(onLoginClick: () -> Unit) {
                 value = email,
                 onValueChange = { email = it },
                 placeholder = { Text(text = "Email", color = Color.Gray) },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
                 modifier = Modifier
                     .fillMaxWidth()

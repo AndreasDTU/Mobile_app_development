@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInScreen(onLoginClick: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }

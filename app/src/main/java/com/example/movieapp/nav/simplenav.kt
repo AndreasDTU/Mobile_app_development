@@ -31,6 +31,7 @@ import com.example.movieapp.ui.screen.MovieDetailScreen
 import com.example.movieapp.ui.screen.MyFriendsScreen
 import com.example.movieapp.viewmodels.MovieDetailViewModel
 import com.example.movieapp.viewmodels.MovieViewModel
+import com.example.movieapp.ui.screen.MyList
 
 @Composable
 fun simplenav() {
@@ -57,6 +58,11 @@ fun simplenav() {
                     selected = currentRoute == "MyFriendsScreen",
                     onClick = { navController.navigate("MyFriendsScreen") },
                     label = { Text("Friends") },
+
+                    selected = currentRoute == "MyListScreen",
+                    onClick = { navController.navigate("MyListScreen") },
+                    label = { Text("My List") },
+
                     icon = {} )
             }
         }
@@ -73,9 +79,12 @@ fun simplenav() {
                 Log.d("Id","Id: $id")
                 MovieDetailScreen(id, navController, MovieDetailViewModel(id, MovieRepository()))
             }
-            // My Friends Screen
             composable("MyFriendsScreen") {
                 MyFriendsScreen()
+            }
+            composable("MyListScreen") {
+                MyList()
+
             }
         }
     }
