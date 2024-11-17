@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.movieapp.viewmodels.UserViewModel
 
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
     userViewModel: UserViewModel = viewModel(),
     onEditClick: () -> Unit
 ) {
