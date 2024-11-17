@@ -1,6 +1,7 @@
 package com.example.movieapp.ui.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.movieapp.R
 
+
 data class Friend(
     val name: String,
     val watched: Int,
@@ -29,10 +31,10 @@ data class Friend(
 @Composable
 fun MyFriendsScreen() {
     val friends = listOf(
-        Friend("Jessica", 204, 88, 96, R.drawable.profile_jessica),
-        Friend("Nick", 983, 50, 432, R.drawable.profile_nick),
-        Friend("Ashley", 1, 0, 0, R.drawable.profile_ashley, isNew = true),
-        Friend("Katy", 200, 12, 204, R.drawable.profile_katy)
+        Friend("Jessica", 204, 88, 96,1),
+        Friend("Nick", 983, 50, 432, 1),
+        Friend("Ashley", 1, 0, 0, 1, isNew = true),
+        Friend("Katy", 200, 12, 204, 1)
     )
 
     LazyColumn(
@@ -52,8 +54,8 @@ fun FriendCard(friend: Friend) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        backgroundColor = MaterialTheme.colorScheme.surface
+            .padding(vertical = 4.dp)
+            .background(Color.DarkGray)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
