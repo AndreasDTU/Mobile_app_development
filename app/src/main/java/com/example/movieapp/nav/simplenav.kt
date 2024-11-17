@@ -67,6 +67,24 @@ fun simplenav() {
                 Log.d("Id","Id: $id")
                 MovieDetailScreen(id, navController, MovieDetailViewModel(id, MovieRepository()))
             }
+            composable("FirstTimeScreen") {
+                FirstTimeScreen(
+                    onLoginClick = { },
+                    onGetStartedClick = {}
+                )
+            }
+            composable("LogInScreen") {
+                LogInScreen(
+                    onLoginClick = { }
+
+                )
+            }
+            composable("SignUpScreen") {
+                SignUpScreen(
+                    onLoginClick = { }
+                )
+            }
+
         }
     }
 }

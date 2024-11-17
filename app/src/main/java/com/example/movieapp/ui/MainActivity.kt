@@ -21,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.repositories.MovieRepository
 import com.example.movieapp.nav.simplenav
 import com.example.movieapp.ui.screen.FirstTimeScreen
+import com.example.movieapp.ui.screen.LogInScreen
+import com.example.movieapp.ui.screen.SignUpScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -30,20 +32,29 @@ class MainActivity : ComponentActivity() {
 
             val context = LocalContext.current
             val isFirstLaunch = remember {mutableStateOf(isFirstTimeLaunch(context)) }
+            val isLoggedIn = remember {mutableStateOf(isLoggedIn(context)) }
+
+
+            //For testing purposes
+            isLoggedIn.value = true
+            isFirstLaunch.value = true
             if (isFirstLaunch.value) {
                 // Show FirstTimeScreen if this is the first launch
                 FirstTimeScreen(
-                    onLoginClick = { /* Navigate to Login Screen */ },
+                    onLoginClick = { LogInScreen {  } },
                     onGetStartedClick = {
+
                         markFirstTimeLaunchComplete(context)
                         isFirstLaunch.value = false
                     }
                 )
-            } else {
-                // Show main screen
-                simplenav() // Replace with your main screen composable function
+            } else if (isLoggedIn.value) {
+                    simplenav() // Replace with your main screen composable function
+                } else {
+                    LogInScreen {  }
+                }
+
             }
-        }
     }
     private fun isFirstTimeLaunch(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
@@ -52,6 +63,10 @@ class MainActivity : ComponentActivity() {
     private fun markFirstTimeLaunchComplete(context: Context) {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("is_first_time_launch", false).apply()
+    }
+    private fun isLoggedIn(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("is_first_time_launch", true)
     }
 }
 

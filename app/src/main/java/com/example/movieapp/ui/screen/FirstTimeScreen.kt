@@ -15,32 +15,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import com.example.movieapp.ui.theme.Backgroundcolor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
+fun FirstTimeScreen(onLoginClick: @Composable () -> Unit, onGetStartedClick: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
+            .background(Backgroundcolor),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(horizontal = 32.dp)
+                .padding(top = 64.dp)
         ) {
             Text(
-                text = "Ready to keep track of all of your movies??",
+                text = "Ready to keep track of all of your movies?",
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
             )
             Text(
-                text = "Enter your email to create or sign in to your account.",
+                text = "Enter your email to create an account.",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 24.dp)
