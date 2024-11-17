@@ -9,7 +9,7 @@ import com.example.movieapp.ui.screen.ProfileScreen
 import com.example.movieapp.viewmodels.UserViewModel
 
 @Composable
-fun simplenav(navController: NavHostController) {
+fun ProfileNav(navController: NavHostController) {
     val userViewModel = UserViewModel()
 
     NavHost(navController = navController, startDestination = "profile") {
