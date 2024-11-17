@@ -30,6 +30,7 @@ import com.example.movieapp.ui.screen.SignUpScreen
 import com.example.movieapp.ui.screen.MovieDetailScreen
 import com.example.movieapp.viewmodels.MovieDetailViewModel
 import com.example.movieapp.viewmodels.MovieViewModel
+import com.example.movieapp.ui.screen.MyList
 
 @Composable
 fun simplenav() {
@@ -52,6 +53,11 @@ fun simplenav() {
                     label = { Text("Details") },
                     icon = {}
                 )
+                NavigationBarItem(
+                    selected = currentRoute == "MyListScreen",
+                    onClick = { navController.navigate("MyListScreen") },
+                    label = { Text("My List") },
+                    icon = {} )
             }
         }
     ) { innerPadding ->
@@ -66,6 +72,10 @@ fun simplenav() {
                 val id = navBackStackEntry.arguments?.getInt("id") ?:0
                 Log.d("Id","Id: $id")
                 MovieDetailScreen(id, navController, MovieDetailViewModel(id, MovieRepository()))
+            }
+            // My Friends Screen
+            composable("MyListScreen") {
+                MyList()
             }
         }
     }
