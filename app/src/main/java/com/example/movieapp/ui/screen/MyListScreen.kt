@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MyList() {
     // Main Container
-    androidx.compose.foundation.layout.Column(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1A1A1A)) // Dark background (grayish/black)
     ) {
         // Top Bar
-        androidx.compose.foundation.layout.Box(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFFFFB6C1)) // Pink color for the top bar
@@ -79,7 +79,7 @@ fun MovieRow() {
 
 @Composable
 fun MovieCard() {
-    androidx.compose.foundation.layout.Column(
+    Column(
         modifier = Modifier.padding(horizontal = 8.dp)
     ) {
         Box(
