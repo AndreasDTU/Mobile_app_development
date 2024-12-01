@@ -10,11 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,8 +51,9 @@ fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
                 value = email,
                 onValueChange = { email = it },
                 placeholder = { Text(text = "Email", color = Color.Gray) },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.White,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
@@ -70,7 +71,12 @@ fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(text = "GET STARTED", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "GET STARTED",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -83,7 +89,7 @@ fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
                 modifier = Modifier
                     .clickable { onLoginClick() }
                     .padding(top = 16.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                style = TextStyle(textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             )
         }
     }
