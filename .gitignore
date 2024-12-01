@@ -1,9 +1,10 @@
 # Gradle files
 .gradle/
 build/
+Gradle Scripts
 
 # Local configuration file (sdk path, etc)
-local.properties
+local.properties/*
 local
 # Log/OS Files
 *.log
