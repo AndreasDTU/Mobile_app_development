@@ -92,7 +92,7 @@ fun SearchButton(text: String) {
     Button(
         onClick = {  },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF1A1A1A),
+            containerColor = Color(0xFF2A2A2A),
             contentColor = Color.White
         ),
         modifier = Modifier
