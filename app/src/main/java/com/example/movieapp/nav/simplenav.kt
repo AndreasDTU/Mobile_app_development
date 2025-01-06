@@ -90,11 +90,22 @@ fun simplenav() {
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getInt("id") ?: 0 // Default to 0 if not passed
-                val viewModel = ViewModelProvider(
+                val detailViewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
-                    MovieDetailViewModelFactory(id, repository) // Pass ID and Repository
+                    MovieDetailViewModelFactory(id, repository)
                 )[MovieDetailViewModel::class.java]
-                MovieDetailScreen(id, navController, viewModel)
+
+                val myListViewModel = ViewModelProvider(
+                    LocalViewModelStoreOwner.current!!,
+                    MyListViewModelFactory(repository)
+                )[MyListViewModel::class.java]
+
+                MovieDetailScreen(
+                    id = id,
+                    navController = navController,
+                    viewModel = detailViewModel,
+                    myListViewModel = myListViewModel
+                )
             }
             composable("MyFriendsScreen") { MyFriendsScreen() }
             composable("MyListScreen") {

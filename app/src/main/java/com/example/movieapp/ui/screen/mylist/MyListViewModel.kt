@@ -31,20 +31,23 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
         }
     }
 
+    fun isMovieLiked(movie: Movie): Boolean {
+        return favorites.any { it.id == movie.id }
+    }
+
     fun toggleLike(movie: Movie) {
-        val index = myList.indexOf(movie)
-        if (index != -1) {
-            val updatedMovie = movie.copy(isLiked = !movie.isLiked)
-            myList[index] = updatedMovie
+        val isAlreadyLiked = favorites.any { it.id == movie.id }
 
-            if (updatedMovie.isLiked) {
-                favorites.add(updatedMovie)
-            } else {
-                favorites.removeIf { it.id == updatedMovie.id }
-            }
-
-            saveMovies()
+        if (isAlreadyLiked) {
+            // Remove movie from favorites
+            favorites.removeIf { it.id == movie.id }
+        } else {
+            // Add movie to favorites
+            favorites.add(movie)
         }
+
+        // Save changes
+        saveMovies()
     }
 
     private fun saveMovies() {
