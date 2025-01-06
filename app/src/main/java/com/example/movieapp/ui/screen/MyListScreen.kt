@@ -32,7 +32,7 @@ fun MyList() {
                 .padding(vertical = 16.dp)
         ) {
             Text(
-                text = "❤ My List",
+                text = "My List",
                 color = Color.White,
                 style = MaterialTheme.typography.titleLarge, // Use Material 3 typography
                 textAlign = TextAlign.Center,
