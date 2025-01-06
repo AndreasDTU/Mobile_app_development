@@ -25,13 +25,25 @@ import coil.compose.AsyncImage
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel()) {
+    val topMovie = viewModel.topMovie.collectAsState().value // Observing topMovie
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
     val funnyMovies = viewModel.funnyMovies.collectAsState().value
 
     // Use LazyColumn for vertical scrolling
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        // Trending Movies section
+        // Top Movie Section
+        if (topMovie != null) {
+            TopMovieCard(navController = navController, movie = topMovie)
+        } else {
+            Text(
+                text = "No Featured Movie Available",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        // Trending Movies Section
         Text(
             text = "Trending Movies",
             style = MaterialTheme.typography.titleMedium,
@@ -43,7 +55,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             }
         }
 
-        // Scary Movies section
+        // Scary Movies Section
         Text(
             text = "Scary Movies",
             style = MaterialTheme.typography.titleMedium,
@@ -55,7 +67,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             }
         }
 
-        // Funny Movies section
+        // Funny Movies Section
         Text(
             text = "Funny Movies",
             style = MaterialTheme.typography.titleMedium,
