@@ -1,60 +1,66 @@
 package com.example.movieapp.ui.screen.search
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.theme.LightPurple
+import com.example.movieapp.ui.theme.MovieappTheme
+import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun SearchScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Search Movies",
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.White,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Top Bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp)
+            ) {
+                Text(
+                    text = "Search Movies",
+                    color = TextWhite,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
 
-        SearchBar()
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            // Search Bar
+            SearchBar()
 
-        SearchTitle("Popular Searches")
-        SearchButton("Popular Search 1")
-        SearchButton("Popular Search 2")
-        SearchButton("Popular Search 3")
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            // Popular Searches
+            SectionTitle("Popular Searches")
+            SearchButton("Popular Search 1")
+            SearchButton("Popular Search 2")
+            SearchButton("Popular Search 3")
 
+            Spacer(modifier = Modifier.height(16.dp))
 
-        SearchTitle("Recent Searches")
-        SearchButton("Recent Search 1")
-        SearchButton("Recent Search 2")
+            // Recent Searches
+            SectionTitle("Recent Searches")
+            SearchButton("Recent Search 1")
+            SearchButton("Recent Search 2")
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar() {
     var searchQuery by remember { mutableStateOf("") }
@@ -62,42 +68,40 @@ fun SearchBar() {
     TextField(
         value = searchQuery,
         onValueChange = { searchQuery = it },
-        placeholder = { Text("Search movies...", color = Color.Gray) },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFFFB6C1),
-            unfocusedContainerColor = Color(0xFFFFB6C1),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+        placeholder = { Text("Search movies...", color = LightPurple) },
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            focusedIndicatorColor = LightPurple,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.background
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .background(Color(0xFFFFB6C1), shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp)
+            .height(50.dp),
+        shape = RoundedCornerShape(8.dp)
     )
 }
 
 @Composable
-fun SearchTitle(title: String) {
+fun SectionTitle(title: String) {
     Text(
         text = title,
-        color = Color.White,
+        color = LightPurple,
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 9.dp)
     )
 }
 
 @Composable
 fun SearchButton(text: String) {
     Button(
-        onClick = {  },
+        onClick = { },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF1A1A1A),
-            contentColor = Color.White
+            containerColor = LightPurple,
+            contentColor = TextWhite
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 2.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
@@ -106,5 +110,13 @@ fun SearchButton(text: String) {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 8.dp)
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchScreenPreview() {
+    MovieappTheme {
+        SearchScreen()
     }
 }
