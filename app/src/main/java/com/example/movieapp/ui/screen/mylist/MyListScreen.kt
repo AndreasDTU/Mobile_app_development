@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.screen.watchlist
+package com.example.movieapp.ui.screen.mylist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

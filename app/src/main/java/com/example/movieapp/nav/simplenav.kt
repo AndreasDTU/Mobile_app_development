@@ -16,7 +16,7 @@ import com.example.movieapp.ui.screen.mainscreen.MainScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.search.SearchScreen
-import com.example.movieapp.ui.screen.watchlist.MyList
+import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
 
