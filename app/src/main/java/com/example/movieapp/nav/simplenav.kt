@@ -12,9 +12,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieapp.repositories.MovieRepository
-import com.example.movieapp.ui.screen.*
-import com.example.movieapp.viewmodels.MovieDetailViewModel
-import com.example.movieapp.viewmodels.MovieViewModel
+import com.example.movieapp.ui.screen.mainscreen.MainScreen
+import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
+import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
+import com.example.movieapp.ui.screen.search.SearchScreen
+import com.example.movieapp.ui.screen.watchlist.MyList
+import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
+import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
 
 @Composable
 fun simplenav() {

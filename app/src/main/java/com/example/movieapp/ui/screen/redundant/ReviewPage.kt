@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.screen
+package com.example.movieapp.ui.screen.redundant
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-
+import com.example.movieapp.ui.screen.watchlist.SectionTitle
 
 
 @Composable

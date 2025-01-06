@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.screen
+package com.example.movieapp.ui.screen.ratings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

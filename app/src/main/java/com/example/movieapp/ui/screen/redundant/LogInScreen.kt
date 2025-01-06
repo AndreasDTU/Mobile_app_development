@@ -1,4 +1,4 @@
-package com.example.movieapp.ui.screen
+package com.example.movieapp.ui.screen.redundant
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,15 +9,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(onLoginClick: () -> Unit) {
+fun LogInScreen(onLoginClick: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
     Box(
@@ -50,6 +50,11 @@ fun SignUpScreen(onLoginClick: () -> Unit) {
                 value = email,
                 onValueChange = { email = it },
                 placeholder = { Text(text = "Email", color = Color.Gray) },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
                 modifier = Modifier
                     .fillMaxWidth()

@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.movieapp.ui.screen.EditProfileScreen
-import com.example.movieapp.ui.screen.ProfileScreen
+import com.example.movieapp.ui.screen.redundant.EditProfileScreen
+import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.viewmodels.UserViewModel
 
 @Composable
