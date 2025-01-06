@@ -13,13 +13,28 @@ import kotlinx.coroutines.launch
 
 class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel() {
     private val _popularMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val popularMovies: StateFlow<List<Movie>> get() = _popularMovies
+    val popularMovies: StateFlow<List<Movie>> = _popularMovies
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _scaryMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val scaryMovies: StateFlow<List<Movie>> get() = _scaryMovies
+    val scaryMovies: StateFlow<List<Movie>> = _scaryMovies
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _funnyMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val funnyMovies: StateFlow<List<Movie>> get() = _funnyMovies
+    val funnyMovies: StateFlow<List<Movie>> = _funnyMovies
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _topMovie = MutableStateFlow<Movie?>(null)
+    val topMovie: StateFlow<Movie?> = _topMovie
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     init {
         fetchPopularMovies()
@@ -29,11 +44,16 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
 
     private fun fetchPopularMovies() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val movies = movieRepository.getPopularMovies()
                 _popularMovies.value = movies
+                _topMovie.value = movies.firstOrNull()
+                _errorMessage.value = null
             } catch (e: Exception) {
-                println("Error fetching popular movies: ${e.message}")
+                _errorMessage.value = "Failed to load popular movies: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -43,8 +63,9 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
             try {
                 val scaryMovies = movieRepository.getScaryMovies()
                 _scaryMovies.value = scaryMovies
+                _errorMessage.value = null
             } catch (e: Exception) {
-                println("Error fetching scary movies: ${e.message}")
+                _errorMessage.value = "Failed to load scary movies: ${e.message}"
             }
         }
     }
@@ -54,8 +75,9 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
             try {
                 val funnyMovies = movieRepository.getFunnyMovies()
                 _funnyMovies.value = funnyMovies
+                _errorMessage.value = null
             } catch (e: Exception) {
-                println("Error fetching funny movies: ${e.message}")
+                _errorMessage.value = "Failed to load funny movies: ${e.message}"
             }
         }
     }
