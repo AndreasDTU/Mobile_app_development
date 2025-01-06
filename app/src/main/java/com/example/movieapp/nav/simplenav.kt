@@ -2,6 +2,12 @@ package com.example.movieapp.nav
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -33,32 +39,27 @@ fun simplenav() {
                     selected = currentRoute == "MainScreen",
                     onClick = { navController.navigate("MainScreen") },
                     label = { Text("Home") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MovieDetailScreen",
-                    onClick = { navController.navigate("MovieDetailScreen/0") },
-                    label = { Text("Details") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MyFriendsScreen",
-                    onClick = { navController.navigate("MyFriendsScreen") },
-                    label = { Text("Friends") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MyListScreen",
-                    onClick = { navController.navigate("MyListScreen") },
-                    label = { Text("My List") },
-                    icon = {}
+                    icon = {Icon(Icons.Default.Home, contentDescription = "Home")}
                 )
                 NavigationBarItem(
                     selected = currentRoute == "SearchScreen",
                     onClick = { navController.navigate("SearchScreen") },
                     label = { Text("Search") },
-                    icon = {}
+                    icon = {Icon(Icons.Default.Search, contentDescription = "Search")}
                 )
+                NavigationBarItem(
+                    selected = currentRoute == "MyListScreen",
+                    onClick = { navController.navigate("MyListScreen") },
+                    label = { Text("My List") },
+                    icon = {Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List")}
+                )
+                NavigationBarItem(
+                    selected = currentRoute == "MyFriendsScreen",
+                    onClick = { navController.navigate("MyFriendsScreen") },
+                    label = { Text("Friends") },
+                    icon = {Icon(Icons.Default.Person, contentDescription = "Friends")}
+                )
+
             }
         }
     ) { innerPadding ->

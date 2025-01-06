@@ -1,3 +1,4 @@
+
 package com.example.movieapp.ui.screen.ratings
 
 import androidx.compose.foundation.layout.*
