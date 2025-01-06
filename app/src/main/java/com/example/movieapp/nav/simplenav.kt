@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.navigation.NavType
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,6 +34,8 @@ fun simplenav() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
+    val repository = MovieRepository(context) // Declare repository here
 
     Scaffold(
         bottomBar = {
@@ -76,33 +79,30 @@ fun simplenav() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("MainScreen") {
-                val context = LocalContext.current
-                val repository = MovieRepository(context)
                 val viewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
-                    MovieViewModelFactory(repository) // Corrected reference
+                    MovieViewModelFactory(repository) // Use repository
                 )[MovieViewModel::class.java]
                 MainScreen(navController, viewModel)
             }
-            composable("MovieDetailScreen/{id}") { navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getInt("id") ?: 0
-                val context = LocalContext.current
-                val repository = MovieRepository(context)
+            composable(
+                "MovieDetailScreen/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) { navBackStackEntry ->
+                val id = navBackStackEntry.arguments?.getInt("id") ?: 0 // Default to 0 if not passed
                 val viewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
-                    MovieDetailViewModelFactory(id, repository) // Already correct
+                    MovieDetailViewModelFactory(id, repository) // Pass ID and Repository
                 )[MovieDetailViewModel::class.java]
                 MovieDetailScreen(id, navController, viewModel)
             }
             composable("MyFriendsScreen") { MyFriendsScreen() }
             composable("MyListScreen") {
-                val context = LocalContext.current
-                val repository = MovieRepository(context)
                 val viewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
-                    MyListViewModelFactory(repository)
+                    MyListViewModelFactory(repository) // Use repository
                 )[MyListViewModel::class.java]
-                MyList(viewModel)
+                MyList(navController = navController, viewModel = viewModel)
             }
 
             composable("SearchScreen") { SearchScreen() }

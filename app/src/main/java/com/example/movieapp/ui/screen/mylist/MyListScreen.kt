@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.movieapp.data.model.Movie
 
 @Composable
-fun MyList(viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun MyList(navController: NavController, viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val myList = viewModel.myList
     val recentlyWatched = viewModel.recentlyWatched
     val favorites = viewModel.favorites
@@ -44,19 +47,19 @@ fun MyList(viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.vie
             )
         }
 
-        // sections
+        // Sections
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
                 SectionTitle("My List")
-                MovieRow(myList, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(navController = navController, movies = myList, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Recently Watched")
-                MovieRow(recentlyWatched, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(navController = navController, movies = recentlyWatched, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Favorites")
-                MovieRow(favorites, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(navController = navController, movies = favorites, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
         }
     }
@@ -73,41 +76,38 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun MovieRow(movies: List<Movie>?, onLikeClicked: (Movie) -> Unit) {
-    println(movies) // Debugging: print the movies list to the log
-
+fun MovieRow(navController: NavController, movies: List<Movie>?, onLikeClicked: (Movie) -> Unit) {
     LazyRow {
         items(movies.orEmpty()) { movie ->
-            MovieCard(movie = movie, onLikeClicked = onLikeClicked)
+            MovieCard(navController = navController, movie = movie)
         }
     }
 }
 
 
 @Composable
-fun MovieCard(movie: Movie, onLikeClicked: (Movie) -> Unit) {
-    Column(
-        modifier = Modifier.padding(horizontal = 8.dp)
+fun MovieCard(navController: NavController, movie: Movie) {
+    Card(
+        modifier = Modifier
+            .size(width = 150.dp, height = 250.dp)
+            .clickable {
+                navController.navigate("MovieDetailScreen/${movie.id}")
+            }
     ) {
-        Box(
-            modifier = Modifier
-                .width(120.dp)
-                .height(180.dp)
-        ) {
-            // Load poster image (e.g., using Coil)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Movie poster
+            AsyncImage(
+                model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                contentDescription = movie.title,
+                modifier = Modifier.fillMaxSize()
+            )
+            // Movie title
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(8.dp),
+                maxLines = 1
+            )
         }
-        androidx.compose.material3.Icon(
-            imageVector = if (movie.isLiked)
-                androidx.compose.material.icons.Icons.Filled.Favorite
-            else
-                androidx.compose.material.icons.Icons.Default.FavoriteBorder,
-            contentDescription = "Like",
-            tint = Color.White,
-            modifier = Modifier
-                .size(24.dp)
-                .padding(top = 4.dp)
-                .align(Alignment.CenterHorizontally)
-                .clickable { onLikeClicked(movie) }
-        )
     }
 }
