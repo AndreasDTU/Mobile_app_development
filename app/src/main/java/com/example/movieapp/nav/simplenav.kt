@@ -83,6 +83,12 @@ fun simplenav() {
                         label = { Text("Search", color = TextWhite) },
                         icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
                     )
+                    NavigationBarItem(
+                        selected = currentRoute == "MyFriendsScreen",
+                        onClick = { navController.navigate("MyFriendsScreen") },
+                        label = { Text("Friends", color = TextWhite) },
+                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Myfriends", tint = LightPurple) }
+                    )
                 }
             }
         ) { innerPadding ->
