@@ -2,6 +2,8 @@ package com.example.movieapp.ui.screen.moviedetails
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,11 +27,12 @@ fun MovieDetailScreen(
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 
     if (movie != null) {
+        // Wrap the content with a LazyColumn to enable scrolling
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState()) // Make the screen scrollable
         ) {
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
@@ -54,6 +57,12 @@ fun MovieDetailScreen(
             }
         }
     } else {
-        Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
+        // Display loading state or message
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }

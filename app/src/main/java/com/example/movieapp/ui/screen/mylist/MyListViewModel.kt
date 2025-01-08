@@ -5,12 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.repositories.MovieRepository
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
 class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
-    private val gson = Gson()
 
     val myList = mutableStateListOf<Movie>()
     val recentlyWatched = mutableStateListOf<Movie>()
@@ -20,6 +17,8 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
         loadMovies() // Load movies when ViewModel is initialized
     }
 
+    // not used (yet)
+    @Suppress("unused")
     fun fetchMovies() {
         viewModelScope.launch {
             try {
@@ -51,7 +50,6 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
     }
 
     private fun saveMovies() {
-        val favoritesJson = gson.toJson(favorites)
         repository.saveMovies("favorites", favorites)
     }
 
