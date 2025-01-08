@@ -1,5 +1,4 @@
 package com.example.movieapp.repositories
-
 import android.util.Log
 import com.example.movieapp.data.remote.ApiClient
 import com.example.movieapp.data.model.Movie
