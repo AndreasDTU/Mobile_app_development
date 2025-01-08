@@ -1,7 +1,6 @@
 package com.example.movieapp.repositories
 
 import android.content.Context
-import android.util.Log
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.data.remote.ApiClient
 import com.google.gson.Gson

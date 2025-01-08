@@ -24,7 +24,6 @@ fun MovieDetailScreen(
     val movie = viewModel.movieDetails.collectAsState().value
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 
-    // Display movie details if available
     if (movie != null) {
         Column(
             modifier = Modifier
@@ -55,7 +54,6 @@ fun MovieDetailScreen(
             }
         }
     } else {
-        // Display loading state or message
         Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
     }
 }

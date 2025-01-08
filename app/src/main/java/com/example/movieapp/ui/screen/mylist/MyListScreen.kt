@@ -20,7 +20,10 @@ import coil.compose.AsyncImage
 import com.example.movieapp.data.model.Movie
 
 @Composable
-fun MyList(navController: NavController, viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun MyList(
+    navController: NavController,
+    viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val myList = viewModel.myList
     val recentlyWatched = viewModel.recentlyWatched
     val favorites = viewModel.favorites
@@ -49,15 +52,24 @@ fun MyList(navController: NavController, viewModel: MyListViewModel = androidx.l
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
                 SectionTitle("My List")
-                MovieRow(navController = navController, movies = myList, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(
+                    navController = navController,
+                    movies = myList,
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Recently Watched")
-                MovieRow(navController = navController, movies = recentlyWatched, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(
+                    navController = navController,
+                    movies = recentlyWatched,
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Favorites")
-                MovieRow(navController = navController, movies = favorites, onLikeClicked = { movie -> viewModel.toggleLike(movie) })
+                MovieRow(
+                    navController = navController,
+                    movies = favorites,
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
         }
     }

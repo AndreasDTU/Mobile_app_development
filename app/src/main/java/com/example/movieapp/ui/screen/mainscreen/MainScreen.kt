@@ -95,8 +95,13 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            val painter: Painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-            Image(painter = painter, contentDescription = movie.title, modifier = Modifier.fillMaxSize())
+            val painter: Painter =
+                rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterPath}")
+            Image(
+                painter = painter,
+                contentDescription = movie.title,
+                modifier = Modifier.fillMaxSize()
+            )
             Text(text = movie.title, modifier = Modifier.padding(top = 8.dp))
         }
     }

@@ -2,7 +2,6 @@ package com.example.movieapp.nav
 
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,49 +29,37 @@ import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 
 @Composable
-fun simplenav() {
+fun SimpleNav() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
     val repository = MovieRepository(context) // Declare repository here
 
-    Scaffold(
-        bottomBar = {
-            BottomAppBar {
-                NavigationBarItem(
-                    selected = currentRoute == "MainScreen",
-                    onClick = { navController.navigate("MainScreen") },
-                    label = { Text("Home") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MovieDetailScreen",
-                    onClick = { navController.navigate("MovieDetailScreen/0") },
-                    label = { Text("Details") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MyFriendsScreen",
-                    onClick = { navController.navigate("MyFriendsScreen") },
-                    label = { Text("Friends") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "MyListScreen",
-                    onClick = { navController.navigate("MyListScreen") },
-                    label = { Text("My List") },
-                    icon = {}
-                )
-                NavigationBarItem(
-                    selected = currentRoute == "SearchScreen",
-                    onClick = { navController.navigate("SearchScreen") },
-                    label = { Text("Search") },
-                    icon = {}
-                )
-            }
+    Scaffold(bottomBar = {
+        BottomAppBar {
+            NavigationBarItem(selected = currentRoute == "MainScreen",
+                onClick = { navController.navigate("MainScreen") },
+                label = { Text("Home") },
+                icon = {})
+            NavigationBarItem(selected = currentRoute == "MovieDetailScreen",
+                onClick = { navController.navigate("MovieDetailScreen/0") },
+                label = { Text("Details") },
+                icon = {})
+            NavigationBarItem(selected = currentRoute == "MyFriendsScreen",
+                onClick = { navController.navigate("MyFriendsScreen") },
+                label = { Text("Friends") },
+                icon = {})
+            NavigationBarItem(selected = currentRoute == "MyListScreen",
+                onClick = { navController.navigate("MyListScreen") },
+                label = { Text("My List") },
+                icon = {})
+            NavigationBarItem(selected = currentRoute == "SearchScreen",
+                onClick = { navController.navigate("SearchScreen") },
+                label = { Text("Search") },
+                icon = {})
         }
-    ) { innerPadding ->
+    }) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = "MainScreen",
@@ -88,20 +75,19 @@ fun simplenav() {
             composable(
                 "MovieDetailScreen/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
-            ) { navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getInt("id") ?: 0 // Default to 0 if not passed
+            ) { backStackEntry ->
+                val movieId = backStackEntry.arguments?.getInt("id") ?: 0
                 val detailViewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
-                    MovieDetailViewModelFactory(id, repository)
+                    MovieDetailViewModelFactory(movieId, repository)
                 )[MovieDetailViewModel::class.java]
 
                 val myListViewModel = ViewModelProvider(
-                    LocalViewModelStoreOwner.current!!,
-                    MyListViewModelFactory(repository)
+                    LocalViewModelStoreOwner.current!!, MyListViewModelFactory(repository)
                 )[MyListViewModel::class.java]
 
                 MovieDetailScreen(
-                    id = id,
+                    id = movieId,
                     navController = navController,
                     viewModel = detailViewModel,
                     myListViewModel = myListViewModel
