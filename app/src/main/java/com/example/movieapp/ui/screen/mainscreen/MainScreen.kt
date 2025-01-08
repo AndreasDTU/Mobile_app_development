@@ -127,31 +127,4 @@ fun MovieCard(navController: NavController, movie: Movie) {
             )
         }
     }
-
-    @Composable
-    fun TopMovieCard(navController: NavController, movie: Movie) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .padding(16.dp)
-                .clickable { navController.navigate("MovieDetailScreen/${movie.id}") }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val painter: Painter =
-                    rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-                Image(
-                    painter = painter,
-                    contentDescription = movie.title,
-                    modifier = Modifier.fillMaxSize()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
-            }
-        }
-    }
 }
