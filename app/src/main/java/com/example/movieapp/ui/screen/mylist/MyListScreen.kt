@@ -2,9 +2,8 @@ package com.example.movieapp.ui.screen.mylist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,38 +27,27 @@ fun MyList(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // LazyColumn to display all movie sections without headers
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item {
-                    MovieRow(
-                        navController = navController,
-                        movies = viewModel.myList,
-                        onLikeClicked = { movie -> viewModel.toggleLike(movie) }
-                    )
-                }
-                item {
-                    MovieRow(
-                        navController = navController,
-                        movies = viewModel.recentlyWatched,
-                        onLikeClicked = { movie -> viewModel.toggleLike(movie) }
-                    )
-                }
-                item {
-                    MovieRow(
-                        navController = navController,
-                        movies = viewModel.favorites,
-                        onLikeClicked = { movie -> viewModel.toggleLike(movie) }
-                    )
-                }
-            }
+            // Favorites section rendered as a grid
+            FavoritesGrid(
+                navController = navController,
+                movies = viewModel.favorites,
+                onLikeClicked = { movie -> viewModel.toggleLike(movie) }
+            )
         }
     }
 }
 
 @Composable
-fun MovieRow(navController: NavController, movies: List<Movie>?, onLikeClicked: (Movie) -> Unit) {
-    LazyRow(modifier = Modifier.padding(vertical = 8.dp)) {
-        items(movies.orEmpty()) { movie ->
+fun FavoritesGrid(navController: NavController, movies: List<Movie>, onLikeClicked: (Movie) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(movies.size) { index ->
+            val movie = movies[index]
             MovieCard(navController = navController, movie = movie)
         }
     }
@@ -69,7 +57,8 @@ fun MovieRow(navController: NavController, movies: List<Movie>?, onLikeClicked: 
 fun MovieCard(navController: NavController, movie: Movie) {
     Card(
         modifier = Modifier
-            .size(width = 150.dp, height = 250.dp)
+            .fillMaxWidth()
+            .aspectRatio(0.75f) // Adjust the aspect ratio as needed
             .padding(8.dp)
             .clickable {
                 navController.navigate("MovieDetailScreen/${movie.id}")

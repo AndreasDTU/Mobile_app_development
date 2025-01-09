@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.screen.mylist
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,18 +36,17 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
     }
 
     fun toggleLike(movie: Movie) {
-        val isAlreadyLiked = favorites.any { it.id == movie.id }
-
-        if (isAlreadyLiked) {
-            // Remove movie from favorites
+        val modified = if (favorites.any { it.id == movie.id }) {
             favorites.removeIf { it.id == movie.id }
+            true
         } else {
-            // Add movie to favorites
             favorites.add(movie)
+            true
         }
 
-        // Save changes
-        saveMovies()
+        if (modified) {
+            saveMovies()
+        }
     }
 
     private fun saveMovies() {
@@ -54,6 +54,11 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
     }
 
     private fun loadMovies() {
-        favorites.addAll(repository.loadMovies("favorites"))
+        try {
+            favorites.addAll(repository.loadMovies("favorites"))
+        } catch (e: Exception) {
+            Log.e("MyListViewModel", "Error loading favorites: ${e.message}")
+        }
     }
+
 }
