@@ -2,6 +2,9 @@ package com.example.movieapp.ui.screen.moviedetails
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -14,86 +17,83 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.movieapp.ui.screen.mylist.MyListViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
-fun MovieDetailScreen(id: Int, navController: NavController, viewModel: MovieDetailViewModel = viewModel()) {
-
+fun MovieDetailScreen(
+    id: Int,
+    navController: NavController,
+    viewModel: MovieDetailViewModel = viewModel(),
+    myListViewModel: MyListViewModel
+) {
     val movie = viewModel.movieDetails.collectAsState().value
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 
+
     AppBackground {
-        // Display movie details if available
         if (movie != null) {
+            // Wrap the content with a LazyColumn to enable scrolling
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .verticalScroll(rememberScrollState()) // Make the screen scrollable
             ) {
-                // Movie Poster
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w500${movie.posterpath}",
+                    model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(0.7f)
                 )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Movie Title
+// Movie Title
                 Text(
                     text = movie.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = TextWhite,
-                    textAlign = TextAlign.Center
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+// Like Button under the title
+                val isLiked = myListViewModel.isMovieLiked(movie)
+                IconButton(
+                    onClick = { myListViewModel.toggleLike(movie) },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(48.dp) // Adjust the size as needed
+                ) {
+                    Icon(
+                        imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = if (isLiked) "Unlike" else "Like",
+                        tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray,
+                        modifier = Modifier.size(32.dp) // Adjust the icon size
+                    )
+                }
 
-                // Release Year
-                Text(
-                    text = "Release Year: ${movie.releasedate}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = LightPurple,
-                    textAlign = TextAlign.Center
-                )
-
-                // Rating
-                Text(
-                    text = "Rating: ${movie.voteaverage}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = LightPurple,
-                    textAlign = TextAlign.Center
-                )
-
+// Movie Description
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Overview
                 Text(
-                    text = movie.overview,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextWhite,
-                    textAlign = TextAlign.Start
+                    text = movie.overview, // Ensure this value is not null or empty
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         } else {
             // Display loading state or message
             Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
             ) {
-                Text(
-                    text = "Loading...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextWhite
-                )
+                Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
 }
-

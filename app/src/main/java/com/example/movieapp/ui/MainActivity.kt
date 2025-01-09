@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import com.example.movieapp.nav.simplenav
+import com.example.movieapp.nav.SimpleNav
 import com.example.movieapp.ui.screen.redundant.FirstTimeScreen
 import com.example.movieapp.ui.theme.MovieappTheme
 
@@ -14,23 +14,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MovieappTheme { // Wrap the entire content in your app theme
-                val context = LocalContext.current
-                val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
-                if (isFirstLaunch.value) {
-                    // Show FirstTimeScreen if this is the first launch
-                    FirstTimeScreen(
-                        onLoginClick = { /* Navigate to Login Screen */ },
-                        onGetStartedClick = {
-                            markFirstTimeLaunchComplete(context)
-                            isFirstLaunch.value = false
-                        }
-                    )
-                } else {
-                    // Show main screen
-                    simplenav() // Replace with your main screen composable function
-                }
+MovieappTheme {
+    val context = LocalContext.current
+    val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
+    if (isFirstLaunch.value) {
+        // Show FirstTimeScreen if this is the first launch
+        FirstTimeScreen(
+            onLoginClick = { /* Navigate to Login Screen */ },
+            onGetStartedClick = {
+                markFirstTimeLaunchComplete(context)
+                isFirstLaunch.value = false
             }
+        )
+    } else {
+        // Show main screen
+        SimpleNav() // Replace with your main screen composable function
+    }
+}
         }
     }
 

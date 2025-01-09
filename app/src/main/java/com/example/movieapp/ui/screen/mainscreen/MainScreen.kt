@@ -45,59 +45,62 @@ import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel()) {
-    val topMovie = viewModel.topMovie.collectAsState().value
+    val topMovie = viewModel.topMovie.collectAsState().value // Observing topMovie
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
     val funnyMovies = viewModel.funnyMovies.collectAsState().value
 
+    // Use LazyColumn for vertical scrolling
     AppBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Top Bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp)
-            ) {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            // Top Movie Section
+            if (topMovie != null) {
+                TopMovieCard(navController = navController, movie = topMovie)
+            } else {
                 Text(
-                    text = "Movies",
-                    color = TextWhite,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    text = "No Featured Movie Available",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
 
-            // Content Sections
-            Column(modifier = Modifier.padding(16.dp)) {
-                // Top Movie Card
-                topMovie.let {
-                    TopMovieCard(navController = navController, movie = it)
+            // Trending Movies Section
+            Text(
+                text = "Trending Movies",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+            LazyRow {
+                items(popularMovies) { movie ->
+                    MovieCard(navController = navController, movie = movie)
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            // Scary Movies Section
+            Text(
+                text = "Scary Movies",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+            LazyRow {
+                items(scaryMovies) { movie ->
+                    MovieCard(navController = navController, movie = movie)
+                }
+            }
 
-                // Trending Movies
-                SectionTitle(title = "Trending Movies")
-                MovieRow(navController = navController, movies = popularMovies)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Scary Movies
-                SectionTitle(title = "Scary Movies")
-                MovieRow(navController = navController, movies = scaryMovies)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Funny Movies
-                SectionTitle(title = "Funny Movies")
-                MovieRow(navController = navController, movies = funnyMovies)
+            // Funny Movies Section
+            Text(
+                text = "Funny Movies",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+            LazyRow {
+                items(funnyMovies) { movie ->
+                    MovieCard(navController = navController, movie = movie)
             }
         }
     }
+        }
 }
 
 // SectionTitle, TopMovieCard, and MovieRow remain unchanged.
@@ -128,7 +131,7 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/w500${movie.posterpath}",
+                model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                 contentDescription = movie.title,
                 modifier = Modifier.fillMaxSize()
             )
@@ -178,7 +181,7 @@ fun MovieCard(navController: NavController, movie: Movie) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/w500${movie.posterpath}",
+                model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                 contentDescription = movie.title,
                 modifier = Modifier.fillMaxHeight(0.85f)
             )
