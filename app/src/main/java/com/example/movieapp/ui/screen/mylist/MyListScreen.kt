@@ -52,22 +52,19 @@ fun MyList(
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
                 SectionTitle("My List")
-                MovieRow(
-                    navController = navController,
+                MovieRow(navController = navController,
                     movies = myList,
                     onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Recently Watched")
-                MovieRow(
-                    navController = navController,
+                MovieRow(navController = navController,
                     movies = recentlyWatched,
                     onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
             item {
                 SectionTitle("Favorites")
-                MovieRow(
-                    navController = navController,
+                MovieRow(navController = navController,
                     movies = favorites,
                     onLikeClicked = { movie -> viewModel.toggleLike(movie) })
             }
@@ -96,13 +93,11 @@ fun MovieRow(navController: NavController, movies: List<Movie>?, onLikeClicked: 
 
 @Composable
 fun MovieCard(navController: NavController, movie: Movie) {
-    Card(
-        modifier = Modifier
-            .size(width = 150.dp, height = 250.dp)
-            .clickable {
-                navController.navigate("MovieDetailScreen/${movie.id}")
-            }
-    ) {
+    Card(modifier = Modifier
+        .size(width = 150.dp, height = 250.dp)
+        .clickable {
+            navController.navigate("MovieDetailScreen/${movie.id}")
+        }) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             // Movie poster
             AsyncImage(
