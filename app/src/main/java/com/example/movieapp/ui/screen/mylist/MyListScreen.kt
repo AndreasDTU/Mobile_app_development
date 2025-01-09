@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +16,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.theme.DarkPurple
+import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun MyList(
@@ -48,6 +51,7 @@ fun FavoritesGrid(navController: NavController, movies: List<Movie>, onLikeClick
     ) {
         items(movies.size) { index ->
             val movie = movies[index]
+            // Use the updated MovieCard design from MainScreen
             MovieCard(navController = navController, movie = movie)
         }
     }
@@ -58,24 +62,29 @@ fun MovieCard(navController: NavController, movie: Movie) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(0.75f) // Adjust the aspect ratio as needed
-            .padding(8.dp)
+            .aspectRatio(0.75f) // Match the same aspect ratio as MainScreen
             .clickable {
                 navController.navigate("MovieDetailScreen/${movie.id}")
-            }
+            },
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = DarkPurple)
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Movie poster
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                 contentDescription = movie.title,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxHeight(0.85f) // Adjust height to match MainScreen
             )
-            // Movie title
             Text(
                 text = movie.title,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.labelMedium,
+                color = TextWhite,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
                 maxLines = 1
             )
         }
