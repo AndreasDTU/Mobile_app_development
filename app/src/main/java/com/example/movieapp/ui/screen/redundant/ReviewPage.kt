@@ -11,41 +11,45 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mylist.SectionTitle
-
+import com.example.movieapp.ui.theme.LightPurple
+import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun ReviewPageUI() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.DarkGray)
-    ) {
-        // Header Section
-        HeaderSection()
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Header Section
+            HeaderSection()
 
-        // Reviewed Movies Section
-        SectionTitle("Reviewed movies")
-        MovieCarousel()
+            // Reviewed Movies Section
+            SectionTitle("Reviewed Movies")
+            MovieCarousel()
 
-        // Friend's Review Section
-        Spacer(modifier = Modifier.height(16.dp))
-        FriendReviewSection()
+            // Friend's Review Section
+            Spacer(modifier = Modifier.height(16.dp))
+            FriendReviewSection()
 
-        // Friends 5 Star Movies Section
-        Spacer(modifier = Modifier.height(16.dp))
-        SectionTitle("Friends 5 star movies:")
-        MovieCarousel()
+            // Friends 5 Star Movies Section
+            Spacer(modifier = Modifier.height(16.dp))
+            SectionTitle("Friends' 5 Star Movies")
+            MovieCarousel()
 
-        // Bottom Navigation Placeholder
-        Spacer(modifier = Modifier.weight(1f)) // Push navigation to the bottom
-        BottomNavigationPlaceholder()
+            // Bottom Navigation Placeholder
+            Spacer(modifier = Modifier.weight(1f)) // Push navigation to the bottom
+            BottomNavigationPlaceholder()
+        }
     }
 }
 
@@ -54,26 +58,26 @@ fun HeaderSection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color(0xFFEFB7F4)),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // User Profile Icon
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(Color.LightGray, shape = CircleShape),
+                .background(LightPurple, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "J", fontSize = 24.sp, color = Color.Black)
+            Text(text = "J", fontSize = 24.sp, color = TextWhite)
         }
 
         // Username
         Text(
-            text = "Johny",
+            text = "Johnny",
             modifier = Modifier.padding(start = 8.dp),
             fontSize = 18.sp,
-            color = Color.Black
+            color = TextWhite,
+            fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -83,7 +87,7 @@ fun HeaderSection() {
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
             modifier = Modifier.size(24.dp),
-            tint = Color.Black
+            tint = TextWhite
         )
     }
 }
@@ -92,7 +96,7 @@ fun HeaderSection() {
 fun ReviewSectionTitle(title: String) {
     Text(
         text = title,
-        color = Color.White,
+        color = LightPurple,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(vertical = 8.dp)
@@ -117,7 +121,7 @@ fun MoviePoster() {
         modifier = Modifier
             .width(100.dp)
             .height(160.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Black)
+        colors = CardDefaults.cardColors(containerColor = LightPurple)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -141,17 +145,17 @@ fun FriendReviewSection() {
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .background(Color.LightGray, shape = CircleShape),
+                    .background(LightPurple, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "N", fontSize = 20.sp, color = Color.Black)
+                Text(text = "N", fontSize = 20.sp, color = TextWhite)
             }
 
             Text(
                 text = "Nick",
                 modifier = Modifier.padding(start = 8.dp),
                 fontSize = 16.sp,
-                color = Color.White
+                color = TextWhite
             )
         }
 
@@ -160,7 +164,7 @@ fun FriendReviewSection() {
         Text(
             text = "This is what Nick had to say:",
             fontSize = 14.sp,
-            color = Color.White,
+            color = TextWhite,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -168,7 +172,7 @@ fun FriendReviewSection() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.LightGray)
+            colors = CardDefaults.cardColors(containerColor = LightPurple.copy(alpha = 0.1f))
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Row(verticalAlignment = Alignment.Top) {
@@ -182,9 +186,9 @@ fun FriendReviewSection() {
                     )
 
                     Text(
-                        text = "This is the ultimate rizzler movie. My gyatt was lvl 10 scared...",
+                        text = "This is the ultimate movie. My experience was phenomenal!",
                         fontSize = 14.sp,
-                        color = Color.Black,
+                        color = TextWhite,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -198,19 +202,18 @@ fun BottomNavigationPlaceholder() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .background(Color.Black),
+            .height(56.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = Icons.Default.Home, contentDescription = "Home", tint = Color.White)
-        Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
-        Icon(imageVector = Icons.Default.Favorite, contentDescription = "My List", tint = Color.White)
-        Icon(imageVector = Icons.Default.Person, contentDescription = "Profile", tint = Color.White)
+        Icon(imageVector = Icons.Default.Home, contentDescription = "Home", tint = TextWhite)
+        Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = TextWhite)
+        Icon(imageVector = Icons.Default.Favorite, contentDescription = "My List", tint = TextWhite)
+        Icon(imageVector = Icons.Default.Person, contentDescription = "Profile", tint = TextWhite)
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000) // Set a black background for the preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewReviewPage() {
     ReviewPageUI()
