@@ -64,4 +64,17 @@ class MovieRepository {
         }
     }
 
+    suspend fun getMovieByGenreMultiplePage(genre: Int, page: Int): List<Movie> {
+        val response = apiService.getMovieByGenreMultiplePage(API_KEY, genre, "en-US", page)
+        if (response.isSuccessful) {
+            val body = response.body()
+            Log.d("MovieRepository", "Response Body: $body") // Log the entire response body
+            // Log the results to check poster paths
+            return body?.results ?: emptyList()
+        } else {
+            Log.e("MovieRepository", "Error fetching movies: ${response.errorBody()?.string()}")
+            return emptyList()
+        }
+    }
+
 }

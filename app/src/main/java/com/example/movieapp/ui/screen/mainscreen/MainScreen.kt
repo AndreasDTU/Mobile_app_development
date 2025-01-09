@@ -1,6 +1,8 @@
 package com.example.movieapp.ui.screen.mainscreen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +20,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -63,6 +69,13 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
     }
 }
 
+fun Modifier.gradientOverlay(brush: Brush): Modifier = this.then(
+    Modifier.drawWithContent {
+        drawContent()
+        drawRect(brush = brush)
+    }
+)
+
 @Composable
 fun TopMovieCard(navController: NavController, movie: Movie) {
     Card(
@@ -72,23 +85,32 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
             .padding(16.dp)
             .clickable { navController.navigate("MovieDetailScreen/${movie.id}") }  // Navigate to MovieDetailScreen
     ) {
-        Column(
+        Column (
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.run { fillMaxSize().fillMaxSize() }
         ) {
             val painter: Painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterpath}")
-            Image(painter = painter, contentDescription = movie.title, modifier = Modifier.fillMaxSize())
-            Text(text = movie.title, modifier = Modifier.padding(top = 8.dp))
+            Image(painter = painter,
+                contentDescription = movie.title,
+                modifier = Modifier.fillMaxSize().gradientOverlay(
+                    Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black),
+                        startY = 100f // Adjust start position of gradient as needed),
+                )
+                )
+            )
+
+
+        }
         }
     }
-}
 
 @Composable
 fun MovieCard(navController: NavController, movie: Movie) {
     Card(
         modifier = Modifier
             .size(width = 150.dp, height = 250.dp) // Adjust size as needed
+            .padding(3.dp)
             .clickable {
                 navController.navigate("MovieDetailScreen/${movie.id}") // Navigate to detail screen
             }
