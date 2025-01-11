@@ -1,5 +1,4 @@
 package com.example.movieapp.viewmodels
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.data.model.Rating
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class UserViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    private val ratingRepository: RatingRepository = RatingRepository(context)
+    private val ratingRepository: RatingRepository
 ) : ViewModel() {
 
 
