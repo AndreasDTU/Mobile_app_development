@@ -1,5 +1,6 @@
 package com.example.movieapp.repositories
 
+import com.example.movieapp.data.model.Rating
 import com.example.movieapp.data.model.UserProfile
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -31,6 +32,12 @@ class UserRepository {
         val json = adapter.toJson(userProfile)
         // Save the JSON string to a file, database, or API call for next iteration (logic not implemented)
         println("Saved JSON: $json")
+    }
+
+    fun saveRatings(ratings: List<Rating>) {
+        val userProfile = getUserProfile()
+        userProfile.ratings = ratings.toMutableList()
+        saveUserProfile(userProfile)
     }
 }
 
