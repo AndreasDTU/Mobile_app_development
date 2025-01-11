@@ -18,7 +18,8 @@ class UserRepository {
             "name": "Johnny",
             "age": 29,
             "location": "USA",
-            "favorite_genre": "Romantic"
+            "favorite_genre": "Romantic",
+             "ratings": []
         }
     """
 
@@ -33,13 +34,30 @@ class UserRepository {
         // Save the JSON string to a file, database, or API call for next iteration (logic not implemented)
         println("Saved JSON: $json")
     }
-
-    fun saveRatings(ratings: List<Rating>) {
+    // Add or update a rating for a movie
+    fun addRating(movieId: Int, rating: Float) { // * Method to add or update a movie rating
         val userProfile = getUserProfile()
-        userProfile.ratings = ratings.toMutableList()
-        saveUserProfile(userProfile)
+        val existingRating = userProfile.ratings.find { it.movieId == movieId }
+        if (existingRating != null) {
+            existingRating.rating = rating // Update the rating if it exists
+        } else {
+            userProfile.ratings.add(Rating(movieId, rating)) // Add a new rating
+        }
+        saveUserProfile(userProfile) // Save the updated user profile
+    }
+
+    // Retrieve a specific movie's rating
+    fun getRatingForMovie(movieId: Int): Float? { // * Fetch rating for a specific movie
+        val userProfile = getUserProfile()
+        return userProfile.ratings.find { it.movieId == movieId }?.rating
+    }
+
+    // Retrieve all ratings
+    fun getAllRatings(): List<Rating> { // * Fetch all user ratings
+        return getUserProfile().ratings
     }
 }
+
 
 
 

@@ -16,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieapp.repositories.MovieRepository
+import com.example.movieapp.repositories.RatingsRepository
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mainscreen.MainScreen
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
@@ -29,11 +30,16 @@ import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
+import com.example.movieapp.ui.screen.ratings.RatingsScreen
+import com.example.movieapp.ui.screen.ratings.RatingsViewModel
+import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
 import com.example.movieapp.ui.screen.search.SearchScreen
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 import com.example.movieapp.viewmodels.UserViewModel
+import com.example.movieapp.repositories.UserRepository
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +48,9 @@ fun SimpleNav() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
+    val userRepository = UserRepository() // * Initialize UserRepository
     val repository = MovieRepository(context) // Declare repository here
+    val ratingsRepository = RatingsRepository(userRepository) // Manages movie ratings
 
     AppBackground {
         Scaffold(
@@ -78,25 +86,49 @@ fun SimpleNav() {
                         selected = currentRoute == "MainScreen",
                         onClick = { navController.navigate("MainScreen") },
                         label = { Text("Home", color = TextWhite) },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = LightPurple) }
+                        icon = {
+                            Icon(
+                                Icons.Default.Home,
+                                contentDescription = "Home",
+                                tint = LightPurple
+                            )
+                        }
                     )
                     NavigationBarItem(
                         selected = currentRoute == "MyListScreen",
                         onClick = { navController.navigate("MyListScreen") },
                         label = { Text("My List", color = TextWhite) },
-                        icon = { Icon(Icons.Default.Favorite, contentDescription = "My List", tint = LightPurple) }
+                        icon = {
+                            Icon(
+                                Icons.Default.Favorite,
+                                contentDescription = "My List",
+                                tint = LightPurple
+                            )
+                        }
                     )
                     NavigationBarItem(
                         selected = currentRoute == "SearchScreen",
                         onClick = { navController.navigate("SearchScreen") },
                         label = { Text("Search", color = TextWhite) },
-                        icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
+                        icon = {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = LightPurple
+                            )
+                        }
                     )
                     NavigationBarItem(
                         selected = currentRoute == "MyFriendsScreen",
                         onClick = { navController.navigate("MyFriendsScreen") },
                         label = { Text("Friends", color = TextWhite) },
-                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Friends", tint = LightPurple) }
+                        icon = {
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = "Friends",
+                                tint = LightPurple
+                            )
+                        }
                     )
                 }
             }
@@ -131,7 +163,8 @@ fun SimpleNav() {
                         id = movieId,
                         navController = navController,
                         viewModel = detailViewModel,
-                        myListViewModel = myListViewModel
+                        myListViewModel = myListViewModel,
+                        ratingsRepository = ratingsRepository
                     )
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
@@ -146,16 +179,32 @@ fun SimpleNav() {
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
-                        onEditClick = { navController.navigate("EditProfileScreen") }
+                        ratings = ratingsRepository.getRatings(), // * Pass ratings list here
+                        onEditClick = { navController.navigate("EditProfileScreen") },
+                        onViewRatingsClick = { navController.navigate("RatingsScreen") } // * Handle View Ratings button click
                     )
                 }
+
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
                         onSaveClick = { navController.popBackStack() }
                     )
                 }
+
+                composable("RatingsScreen") {
+                    val ratingsViewModel = ViewModelProvider(
+                        LocalViewModelStoreOwner.current!!,
+                        RatingsViewModelFactory(ratingsRepository)
+                    )[RatingsViewModel::class.java]
+
+                    RatingsScreen(
+                        viewModel = ratingsViewModel,
+                        movieRepository = repository
+                    )
+
+                }
             }
         }
-    }
+   }
 }
