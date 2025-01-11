@@ -1,6 +1,7 @@
 package com.example.movieapp.ui.screen.moviedetails
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,9 +22,12 @@ import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
+import com.example.movieapp.repositories.RatingsRepository
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
@@ -33,9 +37,14 @@ fun MovieDetailScreen(
     id: Int,
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
-    myListViewModel: MyListViewModel
+    myListViewModel: MyListViewModel,
+    ratingsRepository: RatingsRepository
+
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
+    val userRating = remember { mutableStateOf(ratingsRepository.getRatingForMovie(id) ?: 0f) }
+    val context = LocalContext.current
+
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 
 
@@ -86,6 +95,58 @@ fun MovieDetailScreen(
                     text = movie.overview, // Ensure this value is not null or empty
                     style = MaterialTheme.typography.bodyMedium
                 )
+            }
+            // Rating Section
+            Text(
+                text = "Rate this movie",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Star Rating Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                for (i in 1..5) {
+                    Icon(
+                        imageVector = if (i <= userRating.value.toInt()) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = if (i <= userRating.value.toInt()) "Filled Star" else "Outlined Star",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clickable {
+                                userRating.value = i.toFloat()
+                                ratingsRepository.addRating(id, i.toFloat()) // Save rating
+                            },
+                        tint = if (i <= userRating.value.toInt()) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Display User Rating
+            if (userRating.value > 0) {
+                Text(
+                    text = "You have rated this film: ",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 1..userRating.value.toInt()) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Star",
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
         } else {
             // Display loading state or message

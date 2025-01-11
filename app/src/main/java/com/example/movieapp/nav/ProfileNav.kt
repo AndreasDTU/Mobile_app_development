@@ -28,7 +28,7 @@ fun ProfileNav(
             ProfileScreen(
                 userViewModel = userViewModel,
                 onEditClick = { navController.navigate("editProfile") },
-                ratings = ratingsRepository.getRatings(), 
+                ratings = ratingsRepository.getRatings(),
                 onViewRatingsClick = { navController.navigate("ratingsScreen") }
             )
         }
