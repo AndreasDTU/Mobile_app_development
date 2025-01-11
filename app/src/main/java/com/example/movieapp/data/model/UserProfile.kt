@@ -6,5 +6,7 @@ data class UserProfile(
     @Json(name = "name") val name: String,
     @Json(name = "age") val age: Int,
     @Json(name = "location") val location: String,
-    @Json(name = "favorite_genre") val favoriteGenre: String
+    @Json(name = "favorite_genre") val favoriteGenre: String,
+    @Json(name = "ratings") val ratings: MutableList<Rating> = mutableListOf() 
+
 )
