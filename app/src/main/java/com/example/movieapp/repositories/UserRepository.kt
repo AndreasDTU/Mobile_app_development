@@ -41,17 +41,16 @@ class UserRepository() {
     }
 
     // Add or update a rating for a movie
-    fun addRating(movieId: Int, rating: Float) {
+    fun addRating(movieId: Int, title: String, posterPath: String, rating: Float) {
         val userProfile = getUserProfile()
         val existingRating = userProfile.ratings.find { it.movieId == movieId }
         if (existingRating != null) {
             existingRating.rating = rating // Update the rating if it exists
         } else {
-            userProfile.ratings.add(Rating(movieId, rating)) // Add a new rating
+            userProfile.ratings.add(Rating(movieId, title, posterPath, rating)) // Add a new rating
         }
         saveUserProfile(userProfile) // Update the cache
     }
-
     // Retrieve a specific movie's rating
     fun getRatingForMovie(movieId: Int): Float? {
         return getUserProfile().ratings.find { it.movieId == movieId }?.rating

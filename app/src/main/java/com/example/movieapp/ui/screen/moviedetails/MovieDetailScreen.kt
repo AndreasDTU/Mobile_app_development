@@ -40,15 +40,19 @@ fun MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
     myListViewModel: MyListViewModel,
-    ratingsViewModel: RatingsViewModel // Updated to use RatingsViewModel
-
+    ratingsViewModel: RatingsViewModel
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
-    val userRating = ratingsViewModel.getRatingForMovie(id) ?: 0f
-    val updatedRating = remember { mutableStateOf(userRating) }
     val context = LocalContext.current
-    Log.d("MovieDetailScreen", "The movie details are: $movie")
 
+    // Retrieve the user's rating for the movie
+    val rating = ratingsViewModel.getRatingForMovie(id)
+    val userRating = rating?.rating ?: 0f
+    val movieTitle = movie?.title ?: rating?.title ?: "Unknown"
+    val moviePoster = movie?.posterPath ?: rating?.posterPath ?: ""
+
+    // Mutable state to track the updated rating
+    var updatedRating by remember { mutableStateOf(userRating) }
 
     AppBackground {
         if (movie != null) {
@@ -59,6 +63,7 @@ fun MovieDetailScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()) // Make the screen scrollable
             ) {
+                // Movie Poster
                 AsyncImage(
                     model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                     contentDescription = movie.title,
@@ -102,42 +107,48 @@ fun MovieDetailScreen(
 
 
                 // Rating Section
-                if (userRating == 0f) {
-                    // Show "Rate this movie" section if no rating exists
-                    Text(text = "Rate this movie", style = MaterialTheme.typography.headlineSmall)
+                if (updatedRating == 0f) {
+                    Text(text = "Rate this movie:", style = MaterialTheme.typography.titleSmall)
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         (1..5).forEach { star ->
                             Icon(
-                                imageVector = if (star <= updatedRating.value) Icons.Filled.Star else Icons.Outlined.Star,
+                                imageVector = if (star <= updatedRating) Icons.Filled.Star else Icons.Outlined.Star,
                                 contentDescription = "$star Star",
                                 modifier = Modifier
                                     .size(40.dp)
-                                    .clickable { updatedRating.value = star.toFloat() },
-                                tint = if (star <= updatedRating.value) MaterialTheme.colorScheme.primary else Color.Gray
+                                    .clickable {
+                                        updatedRating = star.toFloat()
+                                        ratingsViewModel.addRating(
+                                            id,
+                                            movie.title,
+                                            movie.posterPath ?: "",
+                                            updatedRating
+                                        )
+                                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT)
+                                            .show()
+                                    },
+                                tint = if (star <= updatedRating) MaterialTheme.colorScheme.primary else Color.Gray
                             )
                         }
                     }
-                    Button(onClick = {
-                        ratingsViewModel.addRating(id, updatedRating.value)
-                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Text("Save Rating")
-                    }
                 } else {
-                    // Show "You have rated this film" section if rating exists
-                    Text(text = "You have rated this film:", style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        text = "You have rated this film:",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        (1..userRating.toInt()).forEach { _ ->
+                        (1..updatedRating.toInt()).forEach { _ ->
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Rated Star",
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(40.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -147,11 +158,10 @@ fun MovieDetailScreen(
         } else {
             // Display loading state or message
             Box(
-                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()                modifier = Modifier.fillMaxSize()
             ) {
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
 }
-

@@ -22,14 +22,14 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
         }
     }
 
-    fun addRating(movieId: Int, rating: Float) {
+    fun addRating(movieId: Int, title: String, posterPath: String, rating: Float) {
         viewModelScope.launch {
-            ratingsRepository.addRating(movieId, rating)
+            ratingsRepository.addRating(movieId, title, posterPath, rating)
             loadRatings() // Reload ratings after adding
         }
     }
 
-    fun getRatingForMovie(movieId: Int): Float? {
+    fun getRatingForMovie(movieId: Int): Rating? {
         return ratingsRepository.getRatingForMovie(movieId)
     }
 }
