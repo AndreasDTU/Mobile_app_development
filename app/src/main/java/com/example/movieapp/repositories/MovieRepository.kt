@@ -63,4 +63,11 @@ class MovieRepository(private val context: Context) {
             throw Exception("Failed to load movie details: ${response.message()}")
         }
     }
+    suspend fun searchMovies(query: String): List<Movie> {
+        val response = apiService.searchMovies(API_KEY, query)
+        if (response.isSuccessful) {
+            return response.body()?.results ?: emptyList()
+        }
+        return emptyList()
+    }
 }

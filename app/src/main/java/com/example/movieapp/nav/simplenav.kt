@@ -30,6 +30,8 @@ import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.search.SearchScreen
+import com.example.movieapp.ui.screen.search.SearchViewModel
+import com.example.movieapp.ui.screen.search.SearchViewModelFactory
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
@@ -134,6 +136,7 @@ fun SimpleNav() {
                         myListViewModel = myListViewModel
                     )
                 }
+
                 composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
                     val viewModel = ViewModelProvider(
@@ -142,7 +145,6 @@ fun SimpleNav() {
                     )[MyListViewModel::class.java]
                     MyList(navController = navController, viewModel = viewModel)
                 }
-                composable("SearchScreen") { SearchScreen() }
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
@@ -155,6 +157,16 @@ fun SimpleNav() {
                         onSaveClick = { navController.popBackStack() }
                     )
                 }
+                composable(route = "SearchScreen") {
+                    val viewModel = ViewModelProvider(
+                        LocalViewModelStoreOwner.current!!,
+                        SearchViewModelFactory(repository)
+                    )[SearchViewModel::class.java]
+
+                    SearchScreen(navController = navController, searchViewModel = viewModel)
+                }
+
+
             }
         }
     }
