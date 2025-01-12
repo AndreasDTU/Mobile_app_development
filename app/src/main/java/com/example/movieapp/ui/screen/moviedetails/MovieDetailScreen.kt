@@ -1,6 +1,7 @@
 package com.example.movieapp.ui.screen.moviedetails
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -95,57 +96,69 @@ fun MovieDetailScreen(
                     text = movie.overview, // Ensure this value is not null or empty
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }
-            // Rating Section
-            Text(
-                text = "Rate this movie",
-                style = MaterialTheme.typography.headlineSmall
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Star Rating Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                for (i in 1..5) {
-                    Icon(
-                        imageVector = if (i <= userRating.value.toInt()) Icons.Filled.Star else Icons.Outlined.Star,
-                        contentDescription = if (i <= userRating.value.toInt()) "Filled Star" else "Outlined Star",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clickable {
-                                userRating.value = i.toFloat()
-                                ratingsRepository.addRating(id, i.toFloat()) // Save rating
-                            },
-                        tint = if (i <= userRating.value.toInt()) MaterialTheme.colorScheme.primary else Color.Gray
-                    )
-                }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Display User Rating
-            if (userRating.value > 0) {
+                // Rating Section
                 Text(
-                    text = "You have rated this film: ",
+                    text = "Rate this movie",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Star Rating Row
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    (1..5).forEach { index ->
+                        Icon(
+                            imageVector = if (index <= userRating.value.toInt()) Icons.Filled.Star else Icons.Outlined.Star,
+                            contentDescription = "$index Star",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable { userRating.value = index.toFloat() }, // *
+                            tint = if (index <= userRating.value.toInt()) MaterialTheme.colorScheme.primary else Color.Gray // *
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Display User Rating
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "You have rated this film:",
                     style = MaterialTheme.typography.bodyMedium
                 )
+
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    for (i in 1..userRating.value.toInt()) {
+                    (1..userRating.value.toInt()).forEach { _ ->
                         Icon(
                             imageVector = Icons.Filled.Star,
-                            contentDescription = "Star",
+                            contentDescription = "Rated Star",
                             modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
+                }
+
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(onClick = {
+                    ratingsRepository.addRating(id, userRating.value)
+                    Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
+                }) {
+                    Text(text = "Save Rating")
                 }
             }
         } else {
@@ -158,3 +171,4 @@ fun MovieDetailScreen(
         }
     }
 }
+
