@@ -16,14 +16,12 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
         loadRatings()
     }
 
-    // Load all ratings
     fun loadRatings() {
         viewModelScope.launch {
             _ratings.value = ratingsRepository.getRatings()
         }
     }
 
-    // Add or update a rating
     fun addRating(movieId: Int, rating: Float) {
         viewModelScope.launch {
             ratingsRepository.addRating(movieId, rating)
@@ -31,7 +29,6 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
         }
     }
 
-    // Get rating for a specific movie
     fun getRatingForMovie(movieId: Int): Float? {
         return ratingsRepository.getRatingForMovie(movieId)
     }

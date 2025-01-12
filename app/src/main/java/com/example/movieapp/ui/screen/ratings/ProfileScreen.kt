@@ -17,11 +17,12 @@ import com.example.movieapp.viewmodels.UserViewModel
 @Composable
 internal fun ProfileScreen(
     userViewModel: UserViewModel = viewModel(),
-    ratings: List<Rating>,
+    ratingsViewModel: RatingsViewModel, // * Accept RatingsViewModel as a parameter
     onViewRatingsClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
-    val userProfile = userViewModel.userProfile.collectAsState()
+    val userProfile = userViewModel.userProfile.collectAsState() // * Collect user profile state
+    val ratings = ratingsViewModel.ratings.collectAsState().value // * Get ratings from RatingsViewModel
 
     Column(
         modifier = Modifier

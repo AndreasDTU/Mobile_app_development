@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import com.example.movieapp.repositories.RatingsRepository
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 
@@ -39,13 +40,13 @@ fun MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
     myListViewModel: MyListViewModel,
-    ratingsRepository: RatingsRepository
+    ratingsViewModel: RatingsViewModel // Updated to use RatingsViewModel
 
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
-    val userRating = remember { mutableStateOf(ratingsRepository.getRatingForMovie(id) ?: 0f) }
+    val userRating = ratingsViewModel.getRatingForMovie(id) ?: 0f
+    val updatedRating = remember { mutableStateOf(userRating) }
     val context = LocalContext.current
-
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 
 
@@ -101,64 +102,46 @@ fun MovieDetailScreen(
 
 
                 // Rating Section
-                Text(
-                    text = "Rate this movie",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Star Rating Row
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    (1..5).forEach { index ->
-                        Icon(
-                            imageVector = if (index <= userRating.value.toInt()) Icons.Filled.Star else Icons.Outlined.Star,
-                            contentDescription = "$index Star",
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable { userRating.value = index.toFloat() }, // *
-                            tint = if (index <= userRating.value.toInt()) MaterialTheme.colorScheme.primary else Color.Gray // *
-                        )
+                if (userRating == 0f) {
+                    // Show "Rate this movie" section if no rating exists
+                    Text(text = "Rate this movie", style = MaterialTheme.typography.headlineSmall)
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        (1..5).forEach { star ->
+                            Icon(
+                                imageVector = if (star <= updatedRating.value) Icons.Filled.Star else Icons.Outlined.Star,
+                                contentDescription = "$star Star",
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable { updatedRating.value = star.toFloat() },
+                                tint = if (star <= updatedRating.value) MaterialTheme.colorScheme.primary else Color.Gray
+                            )
+                        }
                     }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Display User Rating
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "You have rated this film:",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    (1..userRating.value.toInt()).forEach { _ ->
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Rated Star",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                    Button(onClick = {
+                        ratingsViewModel.addRating(id, updatedRating.value)
+                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Text("Save Rating")
                     }
-                }
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(onClick = {
-                    ratingsRepository.addRating(id, userRating.value)
-                    Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
-                }) {
-                    Text(text = "Save Rating")
+                } else {
+                    // Show "You have rated this film" section if rating exists
+                    Text(text = "You have rated this film:", style = MaterialTheme.typography.headlineSmall)
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        (1..userRating.toInt()).forEach { _ ->
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = "Rated Star",
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
         } else {

@@ -1,16 +1,19 @@
 package com.example.movieapp.repositories
 
+import android.content.SharedPreferences
 import com.example.movieapp.data.model.Rating
 import com.example.movieapp.data.model.UserProfile
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class UserRepository {
+class UserRepository() {
     private val moshi: Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 
     private val adapter = moshi.adapter(UserProfile::class.java)
+    private var cachedUserProfile: UserProfile? = null // In-memory storage for the user profile
+
 
     // Example JSON string representing a user profile
     private val userProfileJson = """
@@ -23,19 +26,22 @@ class UserRepository {
         }
     """
 
-    // Deserialize JSON to UserProfile object
+    // Deserialize JSON to UserProfile object (or use cached if available)
     fun getUserProfile(): UserProfile {
-        return adapter.fromJson(userProfileJson) ?: UserProfile("Unknown", 0, "Unknown", "Unknown")
+        if (cachedUserProfile == null) {
+            cachedUserProfile = adapter.fromJson(userProfileJson)
+        }
+        return cachedUserProfile ?: UserProfile("Unknown", 0, "Unknown", "Unknown")
     }
 
-    // Serialize UserProfile object to JSON
+    // Serialize UserProfile object to JSON (only for debugging/logging purposes)
     fun saveUserProfile(userProfile: UserProfile) {
-        val json = adapter.toJson(userProfile)
-        // Save the JSON string to a file, database, or API call for next iteration (logic not implemented)
-        println("Saved JSON: $json")
+        cachedUserProfile = userProfile // Update the in-memory cache
+        println("Saved Profile: ${adapter.toJson(userProfile)}") // Debug log
     }
+
     // Add or update a rating for a movie
-    fun addRating(movieId: Int, rating: Float) { // * Method to add or update a movie rating
+    fun addRating(movieId: Int, rating: Float) {
         val userProfile = getUserProfile()
         val existingRating = userProfile.ratings.find { it.movieId == movieId }
         if (existingRating != null) {
@@ -43,21 +49,16 @@ class UserRepository {
         } else {
             userProfile.ratings.add(Rating(movieId, rating)) // Add a new rating
         }
-        saveUserProfile(userProfile) // Save the updated user profile
+        saveUserProfile(userProfile) // Update the cache
     }
 
     // Retrieve a specific movie's rating
-    fun getRatingForMovie(movieId: Int): Float? { // * Fetch rating for a specific movie
-        val userProfile = getUserProfile()
-        return userProfile.ratings.find { it.movieId == movieId }?.rating
+    fun getRatingForMovie(movieId: Int): Float? {
+        return getUserProfile().ratings.find { it.movieId == movieId }?.rating
     }
 
     // Retrieve all ratings
-    fun getAllRatings(): List<Rating> { // * Fetch all user ratings
+    fun getAllRatings(): List<Rating> {
         return getUserProfile().ratings
     }
 }
-
-
-
-

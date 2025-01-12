@@ -1,5 +1,6 @@
 package com.example.movieapp.nav
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -48,11 +49,15 @@ fun SimpleNav() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
-    val userRepository = UserRepository() // * Initialize UserRepository
-    val repository = MovieRepository(context) // Declare repository here
-    val ratingsRepository = RatingsRepository(userRepository) // Manages movie ratings
+    val repository = MovieRepository(context) // Initialize MovieRepository
 
-    AppBackground {
+    val userRepository = UserRepository() // * Use the updated in-memory UserRepository
+    val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
+
+    val ratingsViewModel = ViewModelProvider(
+        LocalViewModelStoreOwner.current!!,
+        RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
+    )[RatingsViewModel::class.java]
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -140,7 +145,7 @@ fun SimpleNav() {
             ) {
                 composable("MainScreen") {
                     val viewModel = ViewModelProvider(
-                        LocalViewModelStoreOwner.current!!,
+                            LocalViewModelStoreOwner.current!!,
                         MovieViewModelFactory(repository)
                     )[MovieViewModel::class.java]
                     MainScreen(navController, viewModel)
@@ -164,7 +169,8 @@ fun SimpleNav() {
                         navController = navController,
                         viewModel = detailViewModel,
                         myListViewModel = myListViewModel,
-                        ratingsRepository = ratingsRepository
+                        ratingsViewModel = ratingsViewModel // * Fix: Use ratingsViewModel instead of ratingsRepository
+
                     )
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
@@ -179,7 +185,7 @@ fun SimpleNav() {
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
-                        ratings = ratingsRepository.getRatings(), // * Pass ratings list here
+                        ratingsViewModel = ratingsViewModel, // * Fix: Pass ratingsViewModel instead of ratingsRepository.getRatings()
                         onEditClick = { navController.navigate("EditProfileScreen") },
                         onViewRatingsClick = { navController.navigate("RatingsScreen") } // * Handle View Ratings button click
                     )
@@ -193,13 +199,8 @@ fun SimpleNav() {
                 }
 
                 composable("RatingsScreen") {
-                    val ratingsViewModel = ViewModelProvider(
-                        LocalViewModelStoreOwner.current!!,
-                        RatingsViewModelFactory(ratingsRepository)
-                    )[RatingsViewModel::class.java]
-
                     RatingsScreen(
-                        viewModel = ratingsViewModel,
+                        viewModel = ratingsViewModel, // * Pass the already initialized ratingsViewModel
                         movieRepository = repository
                     )
 
@@ -207,4 +208,3 @@ fun SimpleNav() {
             }
         }
    }
-}

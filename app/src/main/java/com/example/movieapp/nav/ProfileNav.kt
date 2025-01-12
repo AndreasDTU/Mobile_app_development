@@ -25,10 +25,15 @@ fun ProfileNav(
 
     NavHost(navController = navController, startDestination = "profile") {
         composable("profile") {
+            val ratingsViewModel = ViewModelProvider(
+                LocalViewModelStoreOwner.current!!,
+                RatingsViewModelFactory(ratingsRepository) // Initialize RatingsViewModel properly
+            )[RatingsViewModel::class.java]
+
             ProfileScreen(
                 userViewModel = userViewModel,
+                ratingsViewModel = ratingsViewModel, // Pass RatingsViewModel instead of ratings
                 onEditClick = { navController.navigate("editProfile") },
-                ratings = ratingsRepository.getRatings(),
                 onViewRatingsClick = { navController.navigate("ratingsScreen") }
             )
         }
