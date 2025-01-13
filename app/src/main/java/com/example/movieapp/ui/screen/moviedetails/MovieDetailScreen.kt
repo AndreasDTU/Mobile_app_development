@@ -14,7 +14,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun MovieDetailScreen(id: Int, navController: NavController, viewModel: MovieDetailViewModel = viewModel()) {
-
+    Log.d("DetailScreen", "Details has been called")
     val movie = viewModel.movieDetails.collectAsState().value
     Log.d("MovieDetailScreen", "The movie details are: $movie")
 

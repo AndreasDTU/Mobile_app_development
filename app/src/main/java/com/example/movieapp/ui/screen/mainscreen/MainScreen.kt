@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.screen.mainscreen
 
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,11 +28,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import android.util.Log
 
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel()) {
-
+    Log.d("Main screen", "Main Screen has been called")
     val topMovie = viewModel.topMovie.collectAsState().value
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
