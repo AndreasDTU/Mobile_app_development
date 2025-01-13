@@ -1,12 +1,14 @@
 package com.example.movieapp.nav
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -24,18 +26,30 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieapp.repositories.MovieRepository
+import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mainscreen.MainScreen
-import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
+import com.example.movieapp.ui.screen.mainscreen.MovieViewModelFactory
+import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
 import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
+import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
+import com.example.movieapp.ui.screen.mylist.MyList
+import com.example.movieapp.ui.screen.mylist.MyListViewModel
+import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
+import com.example.movieapp.ui.screen.redundant.EditProfileScreen
+import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.search.SearchScreen
 import com.example.movieapp.viewmodels.UserViewModel
-
+import com.example.movieapp.ui.theme.DarkPurple
+import com.example.movieapp.ui.theme.LightPurple
+import com.example.movieapp.ui.theme.TextWhite
 import kotlinx.coroutines.launch
+
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun simplenav() {
@@ -52,9 +66,9 @@ fun simplenav() {
     val currentRoute = navBackStackEntry?.destination?.route
     val parentRoute = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
-    AppBackGround {
+    AppBackground {
         Scaffold(
-            topbar = {
+            topBar = {
                 TopAppBar(
                     title= {
                         Text(
@@ -154,8 +168,18 @@ fun simplenav() {
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
-                        val route = pages[page]
-                        navController.navigate(route)
+                        when (pages[page]) {
+                            "MainScreen" -> MainScreen(navController, ViewModelProvider(
+                                LocalViewModelStoreOwner.current!!,
+                                MovieViewModelFactory(repository)
+                            )[MovieViewModel::class.java])
+                            "SearchScreen" -> SearchScreen()
+                            "MyListScreen" -> MyList(navController,ViewModelProvider(
+                                LocalViewModelStoreOwner.current!!,
+                                MyListViewModelFactory(repository)
+                            )[MyListViewModel::class.java])
+                            "MyFriendsScreen" -> MyFriendsScreen()
+                        }
                     }
                 }
                 composable("MainScreen") {
@@ -192,7 +216,7 @@ fun simplenav() {
                 composable("MyListScreen") {
                     val viewModel =ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
-                        MylistViewMOdelFactory(repository)
+                        MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
                     MyList(navController, viewModel) }
                 composable("ProfileScreen") {
@@ -209,13 +233,16 @@ fun simplenav() {
                         onSaveClick = {navController.popBackStack()}
                     )
                 }
+                /*
                 composable("SearchScreen") {
                     val viewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
-                        SearchViewMOdelFactory(repository)
+                        SearchViewModelFactory(repository)
                     )[SearchViewModel::class.java]
                     SearchScreen(navController, viewModel)
                 }
+                */
+
             }
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -25,7 +26,7 @@ data class Friend(
     val profilePicture: Int, // Replace with actual drawable resource IDs
     val isNew: Boolean = false
 )
-
+@Preview(showBackground = true)
 @Composable
 fun MyFriendsScreen() {
     val friends = listOf(

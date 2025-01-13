@@ -2,10 +2,12 @@ package com.example.movieapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val DarkPurple = Color(0xFF1A003D) // Dark purple background
+val MediumPurple = Color(0xFF3B008E) // Medium purple for primary elements
+val LightPurple = Color(0xFFB35EFF) // Light purple for highlights
+val AccentPink = Color(0xFFF50057) // Accent pink for buttons and icons
+val TextWhite = Color(0xFFFFFFFF) // White text
+val TextGray = Color(0xFFB0B0B0) // Secondary gray text
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+
+

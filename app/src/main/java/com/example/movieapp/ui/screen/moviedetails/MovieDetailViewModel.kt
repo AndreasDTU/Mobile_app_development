@@ -1,6 +1,5 @@
 package com.example.movieapp.ui.screen.moviedetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.data.model.Movie
@@ -9,26 +8,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MovieDetailViewModel(id: Int, private val movieRepository: MovieRepository) : ViewModel() {
+class MovieDetailViewModel(
+    private val movieId: Int,
+    private val movieRepository: MovieRepository
+) : ViewModel() {
 
     private val _movieDetails = MutableStateFlow<Movie?>(null)
-    val movieDetails: StateFlow<Movie?> = _movieDetails
-
+    val movieDetails: StateFlow<Movie?> get() = _movieDetails
 
     init {
-        fetchMovieDetails(id)
+        fetchMovieDetails()
     }
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
 
-    private fun fetchMovieDetails(id: Int) {
+    private fun fetchMovieDetails() {
         viewModelScope.launch {
             try {
-                val movie = movieRepository.getMovieDetails(id)
-                Log.e("MovieModel", "Got the movie $movie")
+                val movie = movieRepository.getMovieDetails(movieId)
                 _movieDetails.value = movie
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                println("Error fetching movie details: ${e.message}")
             }
         }
     }

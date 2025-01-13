@@ -34,7 +34,7 @@ class MovieRepository(private val context: Context) {
         val type = object : TypeToken<List<Movie>>() {}.type
         return gson.fromJson(json, type)
     }
-        
+
 
 
 
@@ -50,6 +50,8 @@ class MovieRepository(private val context: Context) {
 
     suspend fun getFunnyMovies(): List<Movie> {
         val response = apiService.getFunnyMovies(API_KEY)
+
+
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         } else {
