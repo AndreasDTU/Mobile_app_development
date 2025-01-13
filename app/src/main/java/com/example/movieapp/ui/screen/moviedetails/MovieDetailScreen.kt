@@ -158,10 +158,12 @@ fun MovieDetailScreen(
         } else {
             // Display loading state or message
             Box(
-                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()                modifier = Modifier.fillMaxSize()
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
+
         }
     }
 }

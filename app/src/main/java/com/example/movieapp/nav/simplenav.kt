@@ -51,14 +51,14 @@ fun SimpleNav() {
     val context = LocalContext.current
     val repository = MovieRepository(context) // Initialize MovieRepository
 
-    val userRepository = UserRepository() // * Use the updated in-memory UserRepository
+    val userRepository = UserRepository()
     val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
 
     val ratingsViewModel = ViewModelProvider(
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
-        Scaffold(
+    Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
@@ -169,7 +169,7 @@ fun SimpleNav() {
                         navController = navController,
                         viewModel = detailViewModel,
                         myListViewModel = myListViewModel,
-                        ratingsViewModel = ratingsViewModel // * Fix: Use ratingsViewModel instead of ratingsRepository
+                        ratingsViewModel = ratingsViewModel
 
                     )
                 }
@@ -185,12 +185,11 @@ fun SimpleNav() {
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
-                        ratingsViewModel = ratingsViewModel, // * Fix: Pass ratingsViewModel instead of ratingsRepository.getRatings()
+                        ratingsViewModel = ratingsViewModel,
                         onEditClick = { navController.navigate("EditProfileScreen") },
-                        onViewRatingsClick = { navController.navigate("RatingsScreen") } // * Handle View Ratings button click
+                        onViewMoreRatingsClick = { navController.navigate("RatingsScreen") }
                     )
                 }
-
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
@@ -200,7 +199,7 @@ fun SimpleNav() {
 
                 composable("RatingsScreen") {
                     RatingsScreen(
-                        viewModel = ratingsViewModel, // * Pass the already initialized ratingsViewModel
+                        viewModel = ratingsViewModel,
                         movieRepository = repository
                     )
 

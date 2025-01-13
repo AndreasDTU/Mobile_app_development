@@ -22,7 +22,6 @@ fun ProfileNav(
     ratingsRepository: RatingsRepository,
     movieRepository: MovieRepository
 ) {
-
     NavHost(navController = navController, startDestination = "profile") {
         composable("profile") {
             val ratingsViewModel = ViewModelProvider(
@@ -32,18 +31,17 @@ fun ProfileNav(
 
             ProfileScreen(
                 userViewModel = userViewModel,
-                ratingsViewModel = ratingsViewModel, // Pass RatingsViewModel instead of ratings
+                ratingsViewModel = ratingsViewModel,
                 onEditClick = { navController.navigate("editProfile") },
-                onViewRatingsClick = { navController.navigate("ratingsScreen") }
+                onViewMoreRatingsClick = { navController.navigate("ratingsScreen") }
             )
         }
         composable("editProfile") {
             EditProfileScreen(
-                userViewModel = userViewModel,
-                onSaveClick = { navController.popBackStack() }
+                userViewModel = userViewModel, // Pass userViewModel to EditProfileScreen
+                onSaveClick = { navController.popBackStack() } // Handle saving and returning to the previous screen
             )
         }
-        // RatingsScreen Navigation
         composable("ratingsScreen") {
             val ratingsViewModel = ViewModelProvider(
                 LocalViewModelStoreOwner.current!!,

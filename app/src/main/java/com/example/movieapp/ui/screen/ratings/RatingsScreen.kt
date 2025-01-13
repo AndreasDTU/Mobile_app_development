@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.movieapp.data.model.Rating
 import com.example.movieapp.repositories.MovieRepository
 
@@ -42,18 +43,34 @@ fun RatingsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Movie ID: ${rating.movieId}",
-                            modifier = Modifier.weight(1f),
-                            style = MaterialTheme.typography.bodyMedium
+                        // Movie Poster
+                        AsyncImage(
+                            model = if (rating.posterPath?.isNotEmpty() == true) {
+                                "https://image.tmdb.org/t/p/w500${rating.posterPath}"
+                            } else {
+                                null // Placeholder case: provide a placeholder drawable if needed
+                            },
+                            contentDescription = rating.title ?: "Movie Poster",
+                            modifier = Modifier
+                                .size(60.dp)
+                                .padding(end = 8.dp)
                         )
-                        Text(
-                            text = "${rating.rating} ★",
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+
+                        // Movie Title and Rating
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = rating.title ?: "Unknown Title",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            Text(
+                                text = "${rating.rating} ★",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
             }

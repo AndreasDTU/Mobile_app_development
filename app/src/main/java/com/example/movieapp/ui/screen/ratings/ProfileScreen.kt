@@ -8,21 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.movieapp.data.model.Rating
+import coil.compose.AsyncImage
 import com.example.movieapp.viewmodels.UserViewModel
 
 @Composable
 internal fun ProfileScreen(
-    userViewModel: UserViewModel = viewModel(),
-    ratingsViewModel: RatingsViewModel, // * Accept RatingsViewModel as a parameter
-    onViewRatingsClick: () -> Unit,
-    onEditClick: () -> Unit
+    userViewModel: UserViewModel,
+    ratingsViewModel: RatingsViewModel,
+    onViewMoreRatingsClick: () -> Unit, // Callback for "View More Ratings" button
+    onEditClick: () -> Unit // Callback for the "Edit Profile" button
 ) {
     val userProfile = userViewModel.userProfile.collectAsState() // * Collect user profile state
-    val ratings = ratingsViewModel.ratings.collectAsState().value // * Get ratings from RatingsViewModel
+    val ratings = ratingsViewModel.ratings.collectAsState().value // * Collect ratings from RatingsViewModel
 
     Column(
         modifier = Modifier
@@ -31,40 +29,77 @@ internal fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         userProfile.value?.let { profile ->
-            Text(text = "Name: ${profile.name}", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Name: ${profile.name}", style = MaterialTheme.typography.titleLarge) // Display user's name
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Age: ${profile.age}")
-            Text(text = "Location: ${profile.location}")
-            Text(text = "Favorite Genre: ${profile.favoriteGenre}")
+            Text(text = "Age: ${profile.age}") // Display user's age
+            Text(text = "Location: ${profile.location}") // Display user's location
+            Text(text = "Favorite Genre: ${profile.favoriteGenre}") // Display user's favorite genre
 
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onEditClick) {
+            Button(onClick = onEditClick) { // Handle Edit Profile button
                 Text(text = "Edit Profile")
             }
-        } ?: Text(text = "Loading...")
+        } ?: Text(text = "Loading...") // Display loading message if user profile is null
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Ratings Section
         Text(
             text = "My Ratings",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-
         if (ratings.isEmpty()) {
-            Text(text = "No ratings available.")
+            Text(
+                text = "No ratings available", // Display this message if no ratings are available
+                style = MaterialTheme.typography.bodyMedium
+            )
         } else {
-            LazyColumn {
-                items(ratings) { rating ->
-                    Text(text = "Movie ID: ${rating.movieId} - Rating: ${rating.rating} ★")
+            // Show only the first 3 ratings
+            val displayedRatings = ratings.take(3) // Limit to first 3 ratings
+
+            displayedRatings.forEach { rating ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Movie Poster
+                    AsyncImage(
+                        model = "https://image.tmdb.org/t/p/w500${rating.posterPath}", //
+                        contentDescription = rating.title, // Provide movie title for content description
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(end = 8.dp)
+                    )
+
+                    // Movie Title and Rating
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = rating.title, // Display movie title
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        Text(
+                            text = "${rating.rating} ★", // * Display movie rating
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+
+            // 'View More Ratings' Button
+            if (ratings.size > 3) {
+                Button(
+                    onClick = onViewMoreRatingsClick, // Handle View More Ratings button
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 8.dp)
+                ) {
+                    Text("View All Ratings") // Button text
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onViewRatingsClick) {
-            Text(text = "View All Ratings")
-        }
     }
 }
-
