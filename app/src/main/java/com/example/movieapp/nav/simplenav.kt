@@ -253,15 +253,6 @@ fun simplenav() {
                         movieRepository = repository
                     )
                 }
-                /*
-                composable("SearchScreen") {
-                    val viewModel = ViewModelProvider(
-                        LocalViewModelStoreOwner.current!!,
-                        SearchViewModelFactory(repository)
-                    )[SearchViewModel::class.java]
-                    SearchScreen(navController, viewModel)
-                }
-                */
 
             }
         }
