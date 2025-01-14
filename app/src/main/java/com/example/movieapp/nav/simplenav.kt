@@ -69,12 +69,10 @@ fun simplenav() {
     val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "MyFriendsScreen")
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val parentRoute = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
+    val parent = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
-
     val userRepository = UserRepository()
     val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
-
     val ratingsViewModel = ViewModelProvider(
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
@@ -110,7 +108,7 @@ fun simplenav() {
                     contentColor = TextWhite
                 ) {
                     NavigationBarItem(
-                        selected = parentRoute == "MainScreen",
+                        selected = parent == "MainScreen",
                         onClick = {
                             scope.launch {
                                 navController.navigate("SwipeableScreens") {
@@ -124,7 +122,7 @@ fun simplenav() {
                     )
 
                     NavigationBarItem(
-                        selected = parentRoute == "SearchScreen",
+                        selected = parent == "SearchScreen",
                         onClick = {
                             scope.launch {
                                 navController.navigate("SwipeableScreens") {
@@ -138,7 +136,7 @@ fun simplenav() {
                     )
 
                     NavigationBarItem(
-                        selected = parentRoute == "MyListScreen",
+                        selected = parent == "MyListScreen",
                         onClick = {
                             scope.launch {
                                 navController.navigate("SwipeableScreens") {
@@ -155,7 +153,7 @@ fun simplenav() {
                     )
 
                     NavigationBarItem(
-                        selected = parentRoute == "MyFriendsScreen",
+                        selected = parent == "MyFriendsScreen",
                         onClick = {
                             scope.launch {
                                 navController.navigate("SwipeableScreens") {
@@ -164,7 +162,7 @@ fun simplenav() {
                                 pagerState.animateScrollToPage(3)
                             }
                         },
-                        label = { Text("Friends") },
+                        label = { Text("Profile") },
                         icon = { Icon(Icons.Default.Person, contentDescription = "Friends", tint = LightPurple) }
                     )
                 }
