@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import com.example.movieapp.nav.SimpleNav
+import com.example.movieapp.nav.simplenav
 import com.example.movieapp.ui.screen.redundant.FirstTimeScreen
 import com.example.movieapp.ui.theme.MovieappTheme
 
@@ -28,7 +28,7 @@ MovieappTheme {
         )
     } else {
         // Show main screen
-        SimpleNav() // Replace with your main screen composable function
+        simplenav() // Replace with your main screen composable function
     }
 }
         }

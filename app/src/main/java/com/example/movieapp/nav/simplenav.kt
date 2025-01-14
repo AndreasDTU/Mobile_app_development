@@ -1,9 +1,18 @@
 package com.example.movieapp.nav
 
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,13 +26,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieapp.repositories.MovieRepository
-import com.example.movieapp.repositories.RatingsRepository
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mainscreen.MainScreen
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModelFactory
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
+import com.example.movieapp.ui.screen.mylist.MyList
+import com.example.movieapp.ui.screen.ratings.ProfileScreen
+import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
@@ -31,37 +42,35 @@ import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
-import com.example.movieapp.ui.screen.ratings.RatingsScreen
-import com.example.movieapp.ui.screen.ratings.RatingsViewModel
-import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
 import com.example.movieapp.ui.screen.search.SearchScreen
+import com.example.movieapp.viewmodels.UserViewModel
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
-import com.example.movieapp.viewmodels.UserViewModel
-import com.example.movieapp.repositories.UserRepository
+import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SimpleNav() {
+fun simplenav() {
     val navController = rememberNavController()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 4 }
+    )
+    val scope = rememberCoroutineScope()
+
+    // Define pages
+    val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "MyFriendsScreen")
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val context = LocalContext.current
-    val repository = MovieRepository(context) // Initialize MovieRepository
-
-    val userRepository = UserRepository()
-    val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
-
-    val ratingsViewModel = ViewModelProvider(
-        LocalViewModelStoreOwner.current!!,
-        RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
-    )[RatingsViewModel::class.java]
-    Scaffold(
+    val parentRoute = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
+    val repository = MovieRepository(LocalContext.current)
+    AppBackground {
+        Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
+                    title= {
                         Text(
                             text = "FLICK-FINDER",
                             color = TextWhite,
@@ -69,7 +78,7 @@ fun SimpleNav() {
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("ProfileScreen") }) {
+                        IconButton(onClick = { navController.navigate("ProfileScreen")}) {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Profile",
@@ -78,7 +87,7 @@ fun SimpleNav() {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = DarkPurple // Match the theme
+                        containerColor = DarkPurple
                     )
                 )
             },
@@ -88,122 +97,153 @@ fun SimpleNav() {
                     contentColor = TextWhite
                 ) {
                     NavigationBarItem(
-                        selected = currentRoute == "MainScreen",
-                        onClick = { navController.navigate("MainScreen") },
-                        label = { Text("Home", color = TextWhite) },
+                        selected = parentRoute == "MainScreen",
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("SwipeableScreens") {
+                                    popUpTo("SwipeableScreens") { inclusive = true }
+                                }
+                                pagerState.animateScrollToPage(0)
+                            }
+                        },
+                        label = { Text("Home") },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = LightPurple) }
+                    )
+
+                    NavigationBarItem(
+                        selected = parentRoute == "SearchScreen",
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("SwipeableScreens") {
+                                    popUpTo("SwipeableScreens") { inclusive = true }
+                                }
+                                pagerState.animateScrollToPage(1)
+                            }
+                        },
+                        label = { Text("Search") },
+                        icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
+                    )
+
+                    NavigationBarItem(
+                        selected = parentRoute == "MyListScreen",
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("SwipeableScreens") {
+                                    popUpTo("SwipeableScreens") { inclusive = true }
+                                }
+                                pagerState.animateScrollToPage(2)
+                            }
+                        },
+                        label = { Text("My List") },
                         icon = {
-                            Icon(
-                                Icons.Default.Home,
-                                contentDescription = "Home",
-                                tint = LightPurple
+                            Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List", tint = LightPurple
                             )
                         }
                     )
+
                     NavigationBarItem(
-                        selected = currentRoute == "MyListScreen",
-                        onClick = { navController.navigate("MyListScreen") },
-                        label = { Text("My List", color = TextWhite) },
-                        icon = {
-                            Icon(
-                                Icons.Default.Favorite,
-                                contentDescription = "My List",
-                                tint = LightPurple
-                            )
-                        }
-                    )
-                    NavigationBarItem(
-                        selected = currentRoute == "SearchScreen",
-                        onClick = { navController.navigate("SearchScreen") },
-                        label = { Text("Search", color = TextWhite) },
-                        icon = {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = LightPurple
-                            )
-                        }
-                    )
-                    NavigationBarItem(
-                        selected = currentRoute == "MyFriendsScreen",
-                        onClick = { navController.navigate("MyFriendsScreen") },
-                        label = { Text("Friends", color = TextWhite) },
-                        icon = {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Friends",
-                                tint = LightPurple
-                            )
-                        }
+                        selected = parentRoute == "MyFriendsScreen",
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("SwipeableScreens") {
+                                    popUpTo("SwipeableScreens") { inclusive = true }
+                                }
+                                pagerState.animateScrollToPage(3)
+                            }
+                        },
+                        label = { Text("Friends") },
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Friends", tint = LightPurple) }
                     )
                 }
             }
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "MainScreen",
+                startDestination = "SwipeableScreens",
                 modifier = Modifier.padding(innerPadding)
             ) {
+                // Swipeable Screens
+                composable("SwipeableScreens") {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        when (pages[page]) {
+                            "MainScreen" -> MainScreen(navController, ViewModelProvider(
+                                LocalViewModelStoreOwner.current!!,
+                                MovieViewModelFactory(repository)
+                            )[MovieViewModel::class.java])
+                            "SearchScreen" -> SearchScreen()
+                            "MyListScreen" -> MyList(navController,ViewModelProvider(
+                                LocalViewModelStoreOwner.current!!,
+                                MyListViewModelFactory(repository)
+                            )[MyListViewModel::class.java])
+                            "MyFriendsScreen" -> MyFriendsScreen()
+                        }
+                    }
+                }
                 composable("MainScreen") {
                     val viewModel = ViewModelProvider(
-                            LocalViewModelStoreOwner.current!!,
+                        LocalViewModelStoreOwner.current!!,
                         MovieViewModelFactory(repository)
                     )[MovieViewModel::class.java]
                     MainScreen(navController, viewModel)
                 }
                 composable(
                     "MovieDetailScreen/{id}",
-                    arguments = listOf(navArgument("id") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    val movieId = backStackEntry.arguments?.getInt("id") ?: 0
+                    arguments = listOf(
+                        navArgument("id") { defaultValue = 0 },
+                        navArgument("parent") { defaultValue = "MainScreen" }
+                    )
+                ) { navBackStackEntry ->
+                    val id = navBackStackEntry.arguments?.getInt("id") ?: 0
                     val detailViewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
-                        MovieDetailViewModelFactory(movieId, repository)
+                        MovieDetailViewModelFactory(id, repository)
                     )[MovieDetailViewModel::class.java]
-
                     val myListViewModel = ViewModelProvider(
-                        LocalViewModelStoreOwner.current!!, MyListViewModelFactory(repository)
+                        LocalViewModelStoreOwner.current!!,
+                        MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-
                     MovieDetailScreen(
-                        id = movieId,
-                        navController = navController,
-                        viewModel = detailViewModel,
-                        myListViewModel = myListViewModel,
-                        ratingsViewModel = ratingsViewModel
-
+                        id,
+                        navController,
+                        detailViewModel,
+                        myListViewModel
                     )
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
-                    val viewModel = ViewModelProvider(
+                    val viewModel =ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-                    MyList(navController = navController, viewModel = viewModel)
-                }
-                composable("SearchScreen") { SearchScreen() }
+                    MyList(navController, viewModel) }
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
-                        ratingsViewModel = ratingsViewModel,
-                        onEditClick = { navController.navigate("EditProfileScreen") },
-                        onViewMoreRatingsClick = { navController.navigate("RatingsScreen") }
+                        onEditClick = {
+                            navController.navigate("EditProfileScreen")
+                        }
                     )
                 }
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
-                        onSaveClick = { navController.popBackStack() }
+                        onSaveClick = {navController.popBackStack()}
                     )
                 }
-
-                composable("RatingsScreen") {
-                    RatingsScreen(
-                        viewModel = ratingsViewModel,
-                        movieRepository = repository
-                    )
-
+                /*
+                composable("SearchScreen") {
+                    val viewModel = ViewModelProvider(
+                        LocalViewModelStoreOwner.current!!,
+                        SearchViewModelFactory(repository)
+                    )[SearchViewModel::class.java]
+                    SearchScreen(navController, viewModel)
                 }
+                */
+
             }
         }
-   }
+    }
+}

@@ -2,6 +2,8 @@ package com.example.movieapp.ui.screen.mainscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,6 +26,7 @@ import com.example.movieapp.ui.theme.TextWhite
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +41,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import android.util.Log
+import androidx.compose.ui.draw.drawWithContent
+
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.LightPurple
@@ -49,6 +55,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
     val funnyMovies = viewModel.funnyMovies.collectAsState().value
+
 
     // Use LazyColumn for vertical scrolling
     AppBackground {
@@ -115,6 +122,13 @@ fun SectionTitle(title: String) {
         modifier = Modifier.padding(vertical = 8.dp)
     )
 }
+
+fun Modifier.gradientOverlay(brush: Brush): Modifier = this.then(
+    Modifier.drawWithContent {
+        drawContent()
+        drawRect(brush = brush)
+    }
+)
 
 @Composable
 fun TopMovieCard(navController: NavController, movie: Movie) {
