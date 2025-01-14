@@ -26,6 +26,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieapp.repositories.MovieRepository
+import com.example.movieapp.repositories.RatingsRepository
+import com.example.movieapp.repositories.UserRepository
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mainscreen.MainScreen
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
@@ -42,6 +44,9 @@ import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
+import com.example.movieapp.ui.screen.ratings.RatingsScreen
+import com.example.movieapp.ui.screen.ratings.RatingsViewModel
+import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
 import com.example.movieapp.ui.screen.search.SearchScreen
 import com.example.movieapp.viewmodels.UserViewModel
 import com.example.movieapp.ui.theme.DarkPurple
@@ -66,6 +71,14 @@ fun simplenav() {
     val currentRoute = navBackStackEntry?.destination?.route
     val parentRoute = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
+
+    val userRepository = UserRepository()
+    val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
+
+    val ratingsViewModel = ViewModelProvider(
+        LocalViewModelStoreOwner.current!!,
+        RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
+    )[RatingsViewModel::class.java]
     AppBackground {
         Scaffold(
             topBar = {
@@ -209,7 +222,8 @@ fun simplenav() {
                         id,
                         navController,
                         detailViewModel,
-                        myListViewModel
+                        myListViewModel,
+                        ratingsViewModel,
                     )
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
@@ -222,15 +236,21 @@ fun simplenav() {
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
-                        onEditClick = {
-                            navController.navigate("EditProfileScreen")
-                        }
+                        ratingsViewModel = ratingsViewModel,
+                        onEditClick = { navController.navigate("EditProfileScreen") },
+                        onViewMoreRatingsClick = { navController.navigate("RatingsScreen") }
                     )
                 }
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
                         onSaveClick = {navController.popBackStack()}
+                    )
+                }
+                composable("RatingsScreen") {
+                    RatingsScreen(
+                        viewModel = ratingsViewModel,
+                        movieRepository = repository
                     )
                 }
                 /*
