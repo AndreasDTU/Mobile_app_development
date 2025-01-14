@@ -44,7 +44,7 @@ fun SimpleNav() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
-    val repository = MovieRepository(context) // Declare repository here
+    val repository = MovieRepository(context)
 
     AppBackground {
         Scaffold(
