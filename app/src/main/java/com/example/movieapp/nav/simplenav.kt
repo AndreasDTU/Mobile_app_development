@@ -31,7 +31,7 @@ import com.example.movieapp.ui.screen.search.SearchViewModel
 import com.example.movieapp.ui.screen.search.SearchViewModelFactory
 
 @Composable
-fun SimpleNav() {
+fun simplenav() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
