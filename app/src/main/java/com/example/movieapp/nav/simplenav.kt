@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -79,11 +80,12 @@ fun simplenav() {
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
+
     AppBackground {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title= {
+                    title = {
                         Text(
                             text = "FLICK-FINDER",
                             color = TextWhite,
@@ -91,7 +93,7 @@ fun simplenav() {
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("ProfileScreen")}) {
+                        IconButton(onClick = { navController.navigate("ProfileScreen") }) {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Profile",
@@ -107,7 +109,6 @@ fun simplenav() {
             bottomBar = {
                 BottomAppBar(
                     containerColor = DarkPurple,
-                    contentColor = TextWhite
                 ) {
                     NavigationBarItem(
                         selected = parent == "MainScreen",
@@ -120,7 +121,14 @@ fun simplenav() {
                             }
                         },
                         label = { Text("Home") },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = LightPurple) }
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = TextWhite,
+                            selectedTextColor = TextWhite,
+                            indicatorColor = Color.Transparent,
+                            unselectedIconColor = TextWhite,
+                            unselectedTextColor = TextWhite
+                        )
                     )
 
                     NavigationBarItem(
@@ -134,7 +142,13 @@ fun simplenav() {
                             }
                         },
                         label = { Text("Search") },
-                        icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
+                        icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = LightPurple,
+                            selectedTextColor = LightPurple,
+                            unselectedIconColor = TextWhite,
+                            unselectedTextColor = TextWhite
+                        )
                     )
 
                     NavigationBarItem(
@@ -148,10 +162,13 @@ fun simplenav() {
                             }
                         },
                         label = { Text("My List") },
-                        icon = {
-                            Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List", tint = LightPurple
-                            )
-                        }
+                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List") },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = LightPurple,
+                            selectedTextColor = LightPurple,
+                            unselectedIconColor = TextWhite,
+                            unselectedTextColor = TextWhite
+                        )
                     )
 
                     NavigationBarItem(
@@ -165,7 +182,14 @@ fun simplenav() {
                             }
                         },
                         label = { Text("Profile") },
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Friends", tint = LightPurple) }
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Friends") },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = LightPurple,
+                            selectedTextColor = LightPurple,
+                            indicatorColor = Color.Transparent, // Removes white background
+                            unselectedIconColor = TextWhite,
+                            unselectedTextColor = TextWhite
+                        )
                     )
                 }
             }
@@ -175,7 +199,6 @@ fun simplenav() {
                 startDestination = "SwipeableScreens",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                // Swipeable Screens
                 composable("SwipeableScreens") {
                     HorizontalPager(
                         state = pagerState,
@@ -190,7 +213,7 @@ fun simplenav() {
                                 LocalViewModelStoreOwner.current!!,
                                 SearchViewModelFactory(repository)
                             )[SearchViewModel::class.java])
-                            "MyListScreen" -> MyList(navController,ViewModelProvider(
+                            "MyListScreen" -> MyList(navController, ViewModelProvider(
                                 LocalViewModelStoreOwner.current!!,
                                 MyListViewModelFactory(repository)
                             )[MyListViewModel::class.java])
@@ -231,11 +254,12 @@ fun simplenav() {
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
-                    val viewModel =ViewModelProvider(
+                    val viewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-                    MyList(navController, viewModel) }
+                    MyList(navController, viewModel)
+                }
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
@@ -247,7 +271,7 @@ fun simplenav() {
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
-                        onSaveClick = {navController.popBackStack()}
+                        onSaveClick = { navController.popBackStack() }
                     )
                 }
                 composable("RatingsScreen") {
@@ -264,7 +288,6 @@ fun simplenav() {
 
                     SearchScreen(navController = navController, searchViewModel = viewModel)
                 }
-
             }
         }
     }
