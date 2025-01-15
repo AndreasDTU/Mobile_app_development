@@ -113,6 +113,7 @@ fun simplenav() {
                 MyList(navController = navController, viewModel = viewModel)
             }
 
+            
         }
     }
 }
