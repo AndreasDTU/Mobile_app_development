@@ -67,7 +67,8 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
                 Text(
                     text = "No Featured Movie Available",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
@@ -75,7 +76,8 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             Text(
                 text = "Trending Movies",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colorScheme.onPrimary
             )
             LazyRow {
                 items(popularMovies) { movie ->
@@ -87,7 +89,8 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             Text(
                 text = "Scary Movies",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colorScheme.onPrimary
             )
             LazyRow {
                 items(scaryMovies) { movie ->
@@ -99,7 +102,8 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             Text(
                 text = "Funny Movies",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colorScheme.onPrimary
             )
             LazyRow {
                 items(funnyMovies) { movie ->
