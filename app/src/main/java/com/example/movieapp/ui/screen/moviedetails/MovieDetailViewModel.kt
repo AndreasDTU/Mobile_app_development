@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class MovieDetailViewModel(
     private val movieId: Int,
-    private val movieRepository: MovieRepository
+    private val repository: MovieRepository
 ) : ViewModel() {
 
     private val _movieDetails = MutableStateFlow<Movie?>(null)
@@ -23,11 +23,15 @@ class MovieDetailViewModel(
     private fun fetchMovieDetails() {
         viewModelScope.launch {
             try {
-                val movie = movieRepository.getMovieDetails(movieId)
+                val movie = repository.getMovieDetails(movieId)
                 _movieDetails.value = movie
             } catch (e: Exception) {
                 println("Error fetching movie details: ${e.message}")
             }
         }
+    }
+
+    suspend fun getMovieTrailer(movieId: Int): String? {
+        return repository.getMovieTrailer(movieId)
     }
 }

@@ -91,4 +91,13 @@ class MovieRepository(private val context: Context) {
         }
     }
 
+    suspend fun getMovieTrailer(movieId: Int): String? {
+        val response = apiService.getMovieVideos(movieId, API_KEY)
+        if (response.isSuccessful) {
+            val videos = response.body()?.results
+            return videos?.firstOrNull { it.type == "Trailer" && it.site == "YouTube" }?.key
+        }
+        return null
+    }
+
 }
