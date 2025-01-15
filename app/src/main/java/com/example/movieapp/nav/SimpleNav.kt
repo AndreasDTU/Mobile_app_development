@@ -27,9 +27,11 @@ import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
 import com.example.movieapp.ui.screen.mainscreen.MovieViewModelFactory
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
+import com.example.movieapp.ui.screen.search.SearchViewModel
+import com.example.movieapp.ui.screen.search.SearchViewModelFactory
 
 @Composable
-fun SimpleNav() {
+fun simplenav() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -65,6 +67,15 @@ fun SimpleNav() {
             startDestination = "MainScreen",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(route = "SearchScreen") {
+                val viewModel = ViewModelProvider(
+                    LocalViewModelStoreOwner.current!!,
+                    SearchViewModelFactory(repository)
+                )[SearchViewModel::class.java]
+
+                SearchScreen(navController = navController, searchViewModel = viewModel)
+            }
+
             composable("MainScreen") {
                 val viewModel = ViewModelProvider(
                     LocalViewModelStoreOwner.current!!,
