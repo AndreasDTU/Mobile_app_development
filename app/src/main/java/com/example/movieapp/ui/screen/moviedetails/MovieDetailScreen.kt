@@ -1,5 +1,4 @@
 package com.example.movieapp.ui.screen.moviedetails
-
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -76,8 +75,9 @@ fun MovieDetailScreen(
 // Movie Title
                 Text(
                     text = movie.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
 
 // Like Button under the title
@@ -100,8 +100,10 @@ fun MovieDetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = movie.overview, // Ensure this value is not null or empty
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 

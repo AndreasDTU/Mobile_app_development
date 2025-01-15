@@ -87,7 +87,7 @@ fun simplenav() {
                         Text(
                             text = "FLICK-FINDER",
                             color = TextWhite,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleMedium
                         )
                     },
                     actions = {
