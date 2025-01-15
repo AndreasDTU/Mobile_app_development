@@ -110,7 +110,7 @@ fun MovieDetailScreen(
 
                 // Rating Section
                 if (updatedRating == 0f) {
-                    Text(text = "Rate this movie:", style = MaterialTheme.typography.titleSmall)
+                    Text(text = "Rate this movie:", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onPrimary)
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -140,7 +140,8 @@ fun MovieDetailScreen(
                     Text(
                         text = "You have rated this film:",
                         style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Row(
                         horizontalArrangement = Arrangement.Center,
