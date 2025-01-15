@@ -64,7 +64,7 @@ dependencies {
     implementation( libs.retrofit)
     implementation (libs.moshi )// Moshi core library
     implementation( libs.moshi.kotlin )// Kotlin support for Moshi
-    implementation (libs.converter.moshi) // Moshi converter for Retrofit
+    implementation (libs.converter.moshi)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

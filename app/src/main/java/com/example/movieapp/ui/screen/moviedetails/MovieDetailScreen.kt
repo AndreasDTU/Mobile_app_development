@@ -1,6 +1,8 @@
 package com.example.movieapp.ui.screen.moviedetails
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,10 +23,14 @@ import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
+import com.example.movieapp.repositories.RatingsRepository
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 
@@ -33,11 +39,20 @@ fun MovieDetailScreen(
     id: Int,
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
-    myListViewModel: MyListViewModel
+    myListViewModel: MyListViewModel,
+    ratingsViewModel: RatingsViewModel
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
-    Log.d("MovieDetailScreen", "The movie details are: $movie")
+    val context = LocalContext.current
 
+    // Retrieve the user's rating for the movie
+    val rating = ratingsViewModel.getRatingForMovie(id)
+    val userRating = rating?.rating ?: 0f
+    val movieTitle = movie?.title ?: rating?.title ?: "Unknown"
+    val moviePoster = movie?.posterPath ?: rating?.posterPath ?: ""
+
+    // Mutable state to track the updated rating
+    var updatedRating by remember { mutableStateOf(userRating) }
 
     AppBackground {
         if (movie != null) {
@@ -48,6 +63,7 @@ fun MovieDetailScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()) // Make the screen scrollable
             ) {
+                // Movie Poster
                 AsyncImage(
                     model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                     contentDescription = movie.title,
@@ -86,14 +102,68 @@ fun MovieDetailScreen(
                     text = movie.overview, // Ensure this value is not null or empty
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+
+                // Rating Section
+                if (updatedRating == 0f) {
+                    Text(text = "Rate this movie:", style = MaterialTheme.typography.titleSmall)
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        (1..5).forEach { star ->
+                            Icon(
+                                imageVector = if (star <= updatedRating) Icons.Filled.Star else Icons.Outlined.Star,
+                                contentDescription = "$star Star",
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable {
+                                        updatedRating = star.toFloat()
+                                        ratingsViewModel.addRating(
+                                            id,
+                                            movie.title,
+                                            movie.posterPath ?: "",
+                                            updatedRating
+                                        )
+                                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT)
+                                            .show()
+                                    },
+                                tint = if (star <= updatedRating) MaterialTheme.colorScheme.primary else Color.Gray
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "You have rated this film:",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        (1..updatedRating.toInt()).forEach { _ ->
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = "Rated Star",
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
             }
         } else {
             // Display loading state or message
             Box(
-                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
+
         }
     }
 }

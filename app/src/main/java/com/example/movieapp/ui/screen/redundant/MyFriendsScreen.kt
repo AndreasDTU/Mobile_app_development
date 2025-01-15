@@ -61,13 +61,14 @@ fun FriendCard(friend: Friend) {
             modifier = Modifier.padding(16.dp)
         ) {
             // Profile Picture
-            Image(
+            /* Image(
                 painter = painterResource(id = friend.profilePicture),
                 contentDescription = friend.name,
                 modifier = Modifier
                     .size(48.dp)
                     .padding(end = 16.dp)
             )
+             */
             // Friend Info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
