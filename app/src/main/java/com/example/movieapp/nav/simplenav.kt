@@ -53,6 +53,8 @@ import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 import kotlinx.coroutines.launch
+import com.example.movieapp.ui.screen.search.SearchViewModel
+import com.example.movieapp.ui.screen.search.SearchViewModelFactory
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -184,7 +186,10 @@ fun simplenav() {
                                 LocalViewModelStoreOwner.current!!,
                                 MovieViewModelFactory(repository)
                             )[MovieViewModel::class.java])
-                            "SearchScreen" -> SearchScreen()
+                            "SearchScreen" -> SearchScreen(navController, ViewModelProvider(
+                                LocalViewModelStoreOwner.current!!,
+                                SearchViewModelFactory(repository)
+                            )[SearchViewModel::class.java])
                             "MyListScreen" -> MyList(navController,ViewModelProvider(
                                 LocalViewModelStoreOwner.current!!,
                                 MyListViewModelFactory(repository)
@@ -250,6 +255,14 @@ fun simplenav() {
                         viewModel = ratingsViewModel,
                         movieRepository = repository
                     )
+                }
+                composable(route = "SearchScreen") {
+                    val viewModel = ViewModelProvider(
+                        LocalViewModelStoreOwner.current!!,
+                        SearchViewModelFactory(repository)
+                    )[SearchViewModel::class.java]
+
+                    SearchScreen(navController = navController, searchViewModel = viewModel)
                 }
 
             }
