@@ -173,7 +173,7 @@ fun simplenav() {
                                 LocalViewModelStoreOwner.current!!,
                                 MyListViewModelFactory(repository)
                             )[MyListViewModel::class.java])
-                            "MyFriendsScreen" -> MyFriendsScreen()
+                            "MyFriendsScreen" -> MyFriendsScreen()  //DET ER HER DU SKAL ÆNDRE TIL PROFILE
                         }
                     }
                 }
