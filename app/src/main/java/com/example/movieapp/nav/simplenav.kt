@@ -109,64 +109,35 @@ fun simplenav() {
                     containerColor = DarkPurple,
                     contentColor = TextWhite
                 ) {
-                    NavigationBarItem(
-                        selected = parent == "MainScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(0)
-                            }
-                        },
-                        label = { Text("Home") },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = LightPurple) }
-                    )
-
-                    NavigationBarItem(
-                        selected = parent == "SearchScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(1)
-                            }
-                        },
-                        label = { Text("Search") },
-                        icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
-                    )
-
-                    NavigationBarItem(
-                        selected = parent == "MyListScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(2)
-                            }
-                        },
-                        label = { Text("My List") },
-                        icon = {
-                            Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List", tint = LightPurple
-                            )
+                    pages.forEachIndexed { index, page ->
+                        val icon = when (page) {
+                            "MainScreen" -> Icons.Default.Home
+                            "SearchScreen" -> Icons.Default.Search
+                            "MyListScreen" -> Icons.AutoMirrored.Filled.List
+                            "MyFriendsScreen" -> Icons.Default.Person
+                            else -> Icons.Default.Home
                         }
-                    )
 
-                    NavigationBarItem(
-                        selected = parent == "MyFriendsScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
+                        NavigationBarItem(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch {
+                                    navController.navigate("SwipeableScreens") {
+                                        popUpTo("SwipeableScreens") { inclusive = true }
+                                    }
+                                    pagerState.animateScrollToPage(index)
                                 }
-                                pagerState.animateScrollToPage(3)
+                            },
+                            label = { Text(page.replace("Screen", "")) },
+                            icon = {
+                                Icon(
+                                    icon,
+                                    contentDescription = page,
+                                    tint = if (pagerState.currentPage == index) LightPurple else TextWhite
+                                )
                             }
-                        },
-                        label = { Text("Profile") },
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Friends", tint = LightPurple) }
-                    )
+                        )
+                    }
                 }
             }
         ) { innerPadding ->
