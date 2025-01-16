@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -79,11 +80,12 @@ fun simplenav() {
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
+
     AppBackground {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title= {
+                    title = {
                         Text(
                             text = "FLICK-FINDER",
                             color = TextWhite,
@@ -91,7 +93,7 @@ fun simplenav() {
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("ProfileScreen")}) {
+                        IconButton(onClick = { navController.navigate("ProfileScreen") }) {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Profile",
@@ -135,7 +137,14 @@ fun simplenav() {
                                     contentDescription = page,
                                     tint = if (pagerState.currentPage == index) LightPurple else TextWhite
                                 )
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = TextWhite,
+                                selectedTextColor = TextWhite,
+                                indicatorColor = Color.Transparent,
+                                unselectedIconColor = TextWhite,
+                                unselectedTextColor = TextWhite
+                            )
                         )
                     }
                 }
@@ -146,7 +155,6 @@ fun simplenav() {
                 startDestination = "SwipeableScreens",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                // Swipeable Screens
                 composable("SwipeableScreens") {
                     HorizontalPager(
                         state = pagerState,
@@ -161,7 +169,7 @@ fun simplenav() {
                                 LocalViewModelStoreOwner.current!!,
                                 SearchViewModelFactory(repository)
                             )[SearchViewModel::class.java])
-                            "MyListScreen" -> MyList(navController,ViewModelProvider(
+                            "MyListScreen" -> MyList(navController, ViewModelProvider(
                                 LocalViewModelStoreOwner.current!!,
                                 MyListViewModelFactory(repository)
                             )[MyListViewModel::class.java])
@@ -202,11 +210,12 @@ fun simplenav() {
                 }
                 composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
-                    val viewModel =ViewModelProvider(
+                    val viewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-                    MyList(navController, viewModel) }
+                    MyList(navController, viewModel)
+                }
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
@@ -218,7 +227,7 @@ fun simplenav() {
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
-                        onSaveClick = {navController.popBackStack()}
+                        onSaveClick = { navController.popBackStack() }
                     )
                 }
                 composable("RatingsScreen") {
@@ -235,7 +244,6 @@ fun simplenav() {
 
                     SearchScreen(navController = navController, searchViewModel = viewModel)
                 }
-
             }
         }
     }

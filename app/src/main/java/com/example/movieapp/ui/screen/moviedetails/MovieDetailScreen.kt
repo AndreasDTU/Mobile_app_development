@@ -1,4 +1,6 @@
 package com.example.movieapp.ui.screen.moviedetails
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -32,6 +34,9 @@ import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun MovieDetailScreen(
@@ -167,6 +172,27 @@ fun MovieDetailScreen(
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
 
+        }
+
+        val context = LocalContext.current
+        val coroutineScope = rememberCoroutineScope()
+
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key from ViewModel
+                    if (trailerKey != null) {
+                        val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
+                        context.startActivity(intent)
+                    } else {
+                        Toast.makeText(context, "Trailer not available", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Watch Trailer")
         }
     }
 }
