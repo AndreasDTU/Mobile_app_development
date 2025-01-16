@@ -67,6 +67,8 @@ dependencies {
     implementation (libs.moshi )// Moshi core library
     implementation( libs.moshi.kotlin )// Kotlin support for Moshi
     implementation (libs.converter.moshi)
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,11 +77,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(libs.firebase.bom)
 
     // Add Firebase services
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
+   // implementation(libs.firebase.analytics)
+   // implementation(libs.firebase.firestore)
+    //implementation(libs.firebase.auth)
+    //implementation(libs.firebase.storage)
 }
