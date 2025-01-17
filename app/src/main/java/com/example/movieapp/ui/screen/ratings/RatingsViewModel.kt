@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
+
+
 class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewModel() {
     private val _ratings = MutableStateFlow<List<Rating>>(emptyList())
     val ratings: StateFlow<List<Rating>> = _ratings
@@ -44,5 +47,11 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
 
         fun getRatingForMovie(movieId: Int): Rating? {
         return ratingsRepository.getRatingForMovie(movieId)
+    }
+
+    fun removeRating(movieId: Int) {
+        viewModelScope.launch {
+            ratingsRepository.removeRating(movieId)
+        }
     }
 }

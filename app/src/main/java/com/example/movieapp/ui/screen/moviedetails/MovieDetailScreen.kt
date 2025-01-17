@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
@@ -166,6 +167,17 @@ fun MovieDetailScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            ratingsViewModel.removeRating(id)
+                            updatedRating = 0f // Reset the local rating
+                            Toast.makeText(context, "Rating removed!", Toast.LENGTH_SHORT).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text("Remove Rating", color = TextWhite)
                     }
                 }
             }
