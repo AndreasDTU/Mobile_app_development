@@ -2,8 +2,10 @@ package com.example.movieapp.repositories
 
 import android.content.Context
 import com.example.movieapp.data.model.Rating
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.tasks.await
 
 
 class RatingsRepository(context: Context) {
@@ -12,13 +14,19 @@ class RatingsRepository(context: Context) {
 
     private val ratingsMap: MutableMap<Int, Rating> = mutableMapOf()
 
+
+
+    // setup for firestore for ratings
+    private val firestore = FirebaseFirestore.getInstance()
+    private val ratingsCollection = firestore.collection("movieRatings") // * Collection in Firestore
+
     init {
         loadRatings() // * Load ratings from SharedPreferences
     }
 
 
     // Add or update a rating
-    fun addRating(movieId: Int, movieTitle: String, posterPath: String, rating: Float): Boolean {
+    suspend fun addRating(movieId: Int, movieTitle: String, posterPath: String, rating: Float): Boolean {
         if (rating < 0 || rating > 5) {
             println("Invalid rating value: $rating. Must be between 0 and 5.")
             return false
@@ -33,7 +41,33 @@ class RatingsRepository(context: Context) {
         }
 
         saveRatings() // * Save updated ratings to SharedPreferences
+
+        // Update Firestore
+        try {
+            val document = ratingsCollection.document(movieId.toString())
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(document)
+
+                val totalRating = snapshot.getDouble("totalRating") ?: 0.0
+                val ratingCount = snapshot.getDouble("ratingCount") ?: 0.0
+
+                // Update totalRating and ratingCount in Firestore
+                transaction.update(document, mapOf(
+                    "totalRating" to totalRating + rating,
+                    "ratingCount" to ratingCount + 1
+                ))
+            }.await()
+        } catch (e: Exception) {
+            //  If Firestore document doesn't exist, create it
+            ratingsCollection.document(movieId.toString()).set(
+                mapOf(
+                    "totalRating" to rating.toDouble(),
+                    "ratingCount" to 1.0,
+                )
+            ).await()
+        }
         return true
+
     }
 
     // Retrieve all ratings
@@ -46,7 +80,22 @@ fun getRatingForMovie(movieId: Int): Rating? {
     return ratingsMap[movieId]
 }
 
-// Save ratings to SharedPreferences
+    //  Fetch average rating from Firestore
+    suspend fun getAverageRating(movieId: Int): Float {
+        return try {
+            val document = ratingsCollection.document(movieId.toString()).get().await()
+            val totalRating = document.getDouble("totalRating") ?: 0.0
+            val ratingCount = document.getDouble("ratingCount") ?: 0.0
+
+            // * Calculate average rating
+            if (ratingCount == 0.0) 0f else (totalRating / ratingCount).toFloat()
+        } catch (e: Exception) {
+            0f // Return 0 if no document exists
+        }
+    }
+
+
+    // Save ratings to SharedPreferences
 private fun saveRatings() {
     val ratingsList = ratingsMap.values.toList()
     val json = gson.toJson(ratingsList) // * Convert ratings to JSON
