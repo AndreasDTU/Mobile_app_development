@@ -21,10 +21,8 @@ import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.MovieappTheme
+import com.example.movieapp.ui.theme.MovieAppTheme
 import com.example.movieapp.ui.theme.TextWhite
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,7 +171,7 @@ fun SearchResultCard(navController: NavController, movie: Movie) {
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
-    MovieappTheme {
+    MovieAppTheme {
         SearchScreen(navController = rememberNavController())
     }
 }

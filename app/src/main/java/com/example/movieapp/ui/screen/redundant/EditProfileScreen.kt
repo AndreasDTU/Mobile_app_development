@@ -8,10 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.movieapp.data.model.UserProfile
 import com.example.movieapp.ui.components.AppBackground
-import com.example.movieapp.ui.theme.MovieappTheme
+import com.example.movieapp.ui.theme.MovieAppTheme
 import com.example.movieapp.viewmodels.UserViewModel
 
 @Composable
@@ -94,7 +92,7 @@ fun EditProfileScreen(
 @Preview(showBackground = true)
 @Composable
 fun EditProfileScreenPreview() {
-    MovieappTheme {
+    MovieAppTheme {
         EditProfileScreen(onSaveClick = {})
     }
 }

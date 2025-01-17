@@ -1,41 +1,34 @@
 package com.example.movieapp.ui.screen.moviedetails
+
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.example.movieapp.repositories.RatingsRepository
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -53,10 +46,9 @@ fun MovieDetailScreen(
 
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
-    val movieTitle = movie?.title ?: rating?.title ?: "Unknown"
-    val moviePoster = movie?.posterPath ?: rating?.posterPath ?: ""
 
     var updatedRating by remember { mutableStateOf(userRating) }
+    val coroutineScope = rememberCoroutineScope()
 
     AppBackground {
         if (movie != null) {
@@ -83,20 +75,64 @@ fun MovieDetailScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 // Like Button under the title
-                val isLiked = myListViewModel.isMovieLiked(movie)
-                IconButton(
-                    onClick = { myListViewModel.toggleLike(movie) },
+
+                Row(
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(48.dp) // Adjust the size as needed
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = if (isLiked) "Unlike" else "Like",
-                        tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray,
-                        modifier = Modifier.size(32.dp) // Adjust the icon size
-                    )
+                    val isLiked = myListViewModel.isMovieLiked(movie)
+                    IconButton(
+                        onClick = { myListViewModel.toggleLike(movie) },
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .size(48.dp) // Adjust the size as needed
+                    ) {
+                        Icon(
+                            imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = if (isLiked) "Unlike" else "Like",
+                            tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray,
+                            modifier = Modifier.size(32.dp) // Adjust the icon size
+                        )
+                    }
+                    // Watch Trailer Button
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key
+                                if (trailerKey != null) {
+                                    val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
+                                    context.startActivity(intent)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Trailer not available",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightPurple,
+                            contentColor = TextWhite
+                        ),
+                        border = BorderStroke(2.dp, Color.Black) // Black outline
+                    ) {
+                        Text("Watch Trailer")
+                    }
                 }
+
+                // Movie Title
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
                 // Genres
                 if (!movie.genres.isNullOrEmpty()) {
                     Text(
@@ -231,28 +267,7 @@ fun MovieDetailScreen(
             ) {
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
-        }
-        val context = LocalContext.current
-        val coroutineScope = rememberCoroutineScope()
 
-        Button(
-            onClick = {
-                coroutineScope.launch {
-                    val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key from ViewModel
-                    if (trailerKey != null) {
-                        val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
-                        context.startActivity(intent)
-                    } else {
-                        Toast.makeText(context, "Trailer not available", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text("Watch Trailer")
         }
     }
-
-
 }

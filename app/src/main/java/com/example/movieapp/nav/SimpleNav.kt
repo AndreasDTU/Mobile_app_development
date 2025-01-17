@@ -1,9 +1,6 @@
 package com.example.movieapp.nav
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,12 +35,9 @@ import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
-import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
 import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
-import com.example.movieapp.ui.screen.redundant.EditProfileScreen
-import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.ratings.RatingsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
@@ -60,7 +53,7 @@ import com.example.movieapp.ui.screen.search.SearchViewModelFactory
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun simplenav() {
+fun SimpleNav() {
     val navController = rememberNavController()
     val pagerState = rememberPagerState(
         initialPage = 0,
