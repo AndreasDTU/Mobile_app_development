@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.movieapp.ui.theme.YellowStar
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -27,8 +28,10 @@ import coil.compose.AsyncImage
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
+import com.example.movieapp.ui.theme.AccentPink
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
+import com.example.movieapp.ui.theme.YellowStar
 import kotlinx.coroutines.launch
 
 
@@ -80,8 +83,10 @@ fun MovieDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.Center
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Spacer(modifier = Modifier.width(14.dp))
+
                     val isLiked = myListViewModel.isMovieLiked(movie)
                     IconButton(
                         onClick = { myListViewModel.toggleLike(movie) },
@@ -92,36 +97,44 @@ fun MovieDetailScreen(
                         Icon(
                             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = if (isLiked) "Unlike" else "Like",
-                            tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray,
-                            modifier = Modifier.size(32.dp) // Adjust the icon size
+                            tint = if (isLiked) AccentPink else Color.Gray,
+                            modifier = Modifier.size(33.dp) // Adjust the icon size
                         )
                     }
+
                     // Watch Trailer Button
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key
-                                if (trailerKey != null) {
-                                    val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
-                                    context.startActivity(intent)
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Trailer not available",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = LightPurple,
-                            contentColor = TextWhite
-                        ),
-                        border = BorderStroke(2.dp, Color.Black) // Black outline
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 45.dp), // Align with Like button spacing
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("Watch Trailer")
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key
+                                    if (trailerKey != null) {
+                                        val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
+                                        context.startActivity(intent)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Trailer not available",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = LightPurple,
+                                contentColor = TextWhite
+                            ),
+                            border = BorderStroke(2.dp, Color.Black) // Black outline
+                        ) {
+                            Text("Watch Trailer")
+                        }
                     }
                 }
 
@@ -233,7 +246,7 @@ fun MovieDetailScreen(
                                         )
                                         Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
                                     },
-                                tint = if (star <= updatedRating) MaterialTheme.colorScheme.primary else Color.Gray
+                                tint = if (star <= updatedRating) Color.Yellow else Color.Gray
                             )
                         }
                     }
@@ -253,7 +266,7 @@ fun MovieDetailScreen(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Rated Star",
                                 modifier = Modifier.size(40.dp),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = (YellowStar),
                             )
                         }
                     }
