@@ -14,7 +14,7 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
 
     private val _averageRating = MutableStateFlow<Float?>(null) // Track the average rating
     val averageRating: StateFlow<Float?> = _averageRating
-    
+
 
     init {
         loadRatings()

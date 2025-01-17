@@ -47,12 +47,16 @@ fun MovieDetailScreen(
     // Retrieve the user's rating for the movie
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
-    val movieTitle = movie?.title ?: rating?.title ?: "Unknown"
-    val moviePoster = movie?.posterPath ?: rating?.posterPath ?: ""
+    val averageRating by ratingsViewModel.averageRating.collectAsState() // Observe average rating
+
 
     // Mutable state to track the updated rating
     var updatedRating by remember { mutableStateOf(userRating) }
 
+    // Load average rating on screen load
+    LaunchedEffect(id) {
+        ratingsViewModel.loadAverageRating(id) // Load average rating when screen opens
+    }
     AppBackground {
         if (movie != null) {
             // Wrap the content with a LazyColumn to enable scrolling
@@ -78,6 +82,13 @@ fun MovieDetailScreen(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp),
                     color = MaterialTheme.colorScheme.onPrimary
+                )
+                // Display Average Rating
+                Text(
+                    text = "Average Rating: ${averageRating ?: "Loading..."} ★",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
 
 // Like Button under the title
