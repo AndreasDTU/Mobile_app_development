@@ -7,7 +7,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-
+import com.example.movieapp.data.model.CastResponse
 
 
 interface ApiService {
@@ -52,6 +52,12 @@ interface ApiService {
         @Query("language") language: String = "en-US"
     ): Response<Movie>
 
+    @GET("movie/{movie_id}/credits")
+    suspend fun getMovieCast(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "en-US"
+    ): Response<CastResponse>
 
     @GET("discover/movie")
     suspend fun getMovieByGenreMultiplePage(
@@ -68,4 +74,6 @@ interface ApiService {
         @Query("language") language: String = "en-US",
         @Query("page") page: Int = 1
     ): Response<MovieResponse>
+
+
 }

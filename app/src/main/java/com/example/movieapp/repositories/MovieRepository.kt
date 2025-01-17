@@ -15,8 +15,12 @@ class MovieRepository(private val context: Context) {
     private val sharedPreferences = context.getSharedPreferences("movie_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+
+
+
     suspend fun getPopularMovies(): List<Movie> {
         val response = apiService.getPopularMovies(API_KEY)
+        Log.d("Movies" , response.toString())
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         } else {
@@ -60,14 +64,22 @@ class MovieRepository(private val context: Context) {
     }
 
     suspend fun getMovieDetails(id: Int): Movie {
-        val response = apiService.getMovieDetails(id, API_KEY)
-        if (response.isSuccessful) {
-            response.body()?.let {
-                return it
-            } ?: throw Exception("No movie details found")
-        } else {
-            throw Exception("Failed to load movie details: ${response.message()}")
+        // Fetch movie details
+        val movieResponse = apiService.getMovieDetails(id, API_KEY)
+        if (!movieResponse.isSuccessful) {
+            throw Exception("Failed to load movie details: ${movieResponse.message()}")
         }
+        val movie = movieResponse.body() ?: throw Exception("No movie details found")
+
+        // Fetch cast details
+        val castResponse = apiService.getMovieCast(id, API_KEY)
+        if (!castResponse.isSuccessful) {
+            throw Exception("Failed to load cast details: ${castResponse.message()}")
+        }
+        val cast = castResponse.body()?.cast ?: emptyList()
+
+        // Combine movie details with cast
+        return movie.copy(cast = cast)
     }
 
     suspend fun searchMovies(query: String): List<Movie> {

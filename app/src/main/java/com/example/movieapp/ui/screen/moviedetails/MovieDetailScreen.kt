@@ -38,6 +38,8 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
+
+
 @Composable
 fun MovieDetailScreen(
     id: Int,
@@ -49,43 +51,38 @@ fun MovieDetailScreen(
     val movie = viewModel.movieDetails.collectAsState().value
     val context = LocalContext.current
 
-    // Retrieve the user's rating for the movie
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
     val movieTitle = movie?.title ?: rating?.title ?: "Unknown"
     val moviePoster = movie?.posterPath ?: rating?.posterPath ?: ""
 
-    // Mutable state to track the updated rating
     var updatedRating by remember { mutableStateOf(userRating) }
 
     AppBackground {
         if (movie != null) {
-            // Wrap the content with a LazyColumn to enable scrolling
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState()) // Make the screen scrollable
+                    .verticalScroll(rememberScrollState())
             ) {
                 // Movie Poster
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                    contentDescription = movie.title,
+                    model = "https://image.tmdb.org/t/p/w500${movie.posterPath ?: ""}",
+                    contentDescription = movie.title ?: "Movie Poster",
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(0.7f)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-// Movie Title
+                // Movie Title
                 Text(
-                    text = movie.title,
+                    text = movie.title ?: "No Title",
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 8.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-
-// Like Button under the title
+                // Like Button under the title
                 val isLiked = myListViewModel.isMovieLiked(movie)
                 IconButton(
                     onClick = { myListViewModel.toggleLike(movie) },
@@ -100,18 +97,82 @@ fun MovieDetailScreen(
                         modifier = Modifier.size(32.dp) // Adjust the icon size
                     )
                 }
+                // Genres
+                if (!movie.genres.isNullOrEmpty()) {
+                    Text(
+                        text = "Genres: ${movie.genres.joinToString { it.name }}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
 
-// Movie Description
-                Spacer(modifier = Modifier.height(16.dp))
+                // Runtime
                 Text(
-                    text = movie.overview, // Ensure this value is not null or empty
+                    text = "Runtime: ${movie.runtime ?: "N/A"} minutes",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
 
+                // Status
+                if (!movie.status.isNullOrEmpty()) {
+                    Text(
+                        text = "Status: ${movie.status}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                // Overview
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = movie.overview ?: "No Overview Available",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+
+                // Cast
+                if (!movie.cast.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Cast:",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Remember state for the expanded list
+                    var isExpanded by remember { mutableStateOf(false) }
+
+                    Column {
+                        val visibleCast = if (isExpanded) movie.cast else movie.cast.take(4)
+
+                        visibleCast.forEach { castMember ->
+                            Text(
+                                text = "${castMember.name} as ${castMember.character ?: "Unknown"}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Expand/Collapse Button
+                        Text(
+                            text = if (isExpanded) "Show Less" else "Show More",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .clickable { isExpanded = !isExpanded }
+                                .padding(vertical = 4.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
 
                 // Rating Section
                 if (updatedRating == 0f) {
@@ -130,12 +191,11 @@ fun MovieDetailScreen(
                                         updatedRating = star.toFloat()
                                         ratingsViewModel.addRating(
                                             id,
-                                            movie.title,
+                                            movie.title ?: "Unknown",
                                             movie.posterPath ?: "",
                                             updatedRating
                                         )
-                                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT)
-                                            .show()
+                                        Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
                                     },
                                 tint = if (star <= updatedRating) MaterialTheme.colorScheme.primary else Color.Gray
                             )
@@ -163,17 +223,15 @@ fun MovieDetailScreen(
                     }
                 }
             }
+
         } else {
-            // Display loading state or message
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
             }
-
         }
-
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
 
@@ -195,4 +253,6 @@ fun MovieDetailScreen(
             Text("Watch Trailer")
         }
     }
+
+
 }
