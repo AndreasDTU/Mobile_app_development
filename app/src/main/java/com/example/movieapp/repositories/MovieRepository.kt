@@ -40,29 +40,6 @@ class MovieRepository(private val context: Context) {
     }
 
 
-
-
-
-    suspend fun getScaryMovies(): List<Movie> {
-        val response = apiService.getScaryMovies(API_KEY)
-        if (response.isSuccessful) {
-            return response.body()?.results ?: emptyList()
-        } else {
-            return emptyList()
-        }
-    }
-
-    suspend fun getFunnyMovies(): List<Movie> {
-        val response = apiService.getFunnyMovies(API_KEY)
-
-
-        if (response.isSuccessful) {
-            return response.body()?.results ?: emptyList()
-        } else {
-            return emptyList()
-        }
-    }
-
     suspend fun getMovieDetails(id: Int): Movie {
         // Fetch movie details
         val movieResponse = apiService.getMovieDetails(id, API_KEY)

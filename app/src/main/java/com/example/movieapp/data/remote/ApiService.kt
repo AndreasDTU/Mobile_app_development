@@ -26,25 +26,6 @@ interface ApiService {
         @Query("language") language: String = "en-US"
     ): Response<VideoResponse>
 
-
-    @GET("discover/movie")
-    suspend fun getScaryMovies(
-        @Query("api_key") apiKey: String,
-        @Query("with_genres") genreId: Int = 27, // Genre ID for Horror
-        @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
-    ): Response<MovieResponse>
-
-
-    @GET("discover/movie")
-    suspend fun getFunnyMovies(
-        @Query("api_key") apiKey: String,
-        @Query("with_genres") genreId: Int = 35,  // Genre ID for comedy
-        @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1
-    ): Response<MovieResponse>
-
-
     @GET("movie/{movieId}")
     suspend fun getMovieDetails(
         @Path("movieId") movieId: Int,

@@ -88,7 +88,7 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
     private fun fetchScaryMovies() {
         viewModelScope.launch {
             try {
-                val scaryMovies = movieRepository.getScaryMovies()
+                val scaryMovies = movieRepository.getMovieByGenre(27)
                 _scaryMovies.value = scaryMovies
                 _errorMessage.value = null
             } catch (e: Exception) {
@@ -100,7 +100,7 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
     private fun fetchFunnyMovies() {
         viewModelScope.launch {
             try {
-                val funnyMovies = movieRepository.getFunnyMovies()
+                val funnyMovies = movieRepository.getMovieByGenre(35)
                 _funnyMovies.value = funnyMovies
                 _errorMessage.value = null
             } catch (e: Exception) {
