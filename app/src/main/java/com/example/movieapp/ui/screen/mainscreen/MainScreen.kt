@@ -2,8 +2,6 @@ package com.example.movieapp.ui.screen.mainscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -19,35 +17,21 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.MediumPurple
-import com.example.movieapp.ui.theme.MovieappTheme
+import com.example.movieapp.ui.theme.MovieAppTheme
 import com.example.movieapp.ui.theme.TextWhite
 
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import android.util.Log
 import androidx.compose.ui.draw.drawWithContent
 
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
-import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel()) {
@@ -219,7 +203,7 @@ fun MovieCard(navController: NavController, movie: Movie) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MovieappTheme {
+    MovieAppTheme {
         MainScreen(navController = rememberNavController())
     }
 }

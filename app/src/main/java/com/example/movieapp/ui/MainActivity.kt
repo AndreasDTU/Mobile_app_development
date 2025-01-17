@@ -6,15 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import com.example.movieapp.nav.simplenav
+import com.example.movieapp.nav.SimpleNav
 import com.example.movieapp.ui.screen.redundant.FirstTimeScreen
-import com.example.movieapp.ui.theme.MovieappTheme
+import com.example.movieapp.ui.theme.MovieAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-MovieappTheme {
+MovieAppTheme {
     val context = LocalContext.current
     val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
     if (isFirstLaunch.value) {
@@ -28,7 +28,7 @@ MovieappTheme {
         )
     } else {
         // Show main screen
-        simplenav() // Replace with your main screen composable function
+        SimpleNav() // Replace with your main screen composable function
     }
 }
         }
