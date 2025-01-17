@@ -90,8 +90,8 @@ class MovieRepository(private val context: Context) {
     }
 
 
-    suspend fun getMovieByGenreMultiplePage(genre: Int, page: Int): List<Movie> {
-        val response = apiService.getMovieByGenreMultiplePage(API_KEY, genre, "en-US", page)
+    suspend fun getMovieByGenre(genre: Int): List<Movie> {
+        val response = apiService.getMovieByGenre(API_KEY, genre, "en-US")
         if (response.isSuccessful) {
             val body = response.body()
             Log.d("MovieRepository", "Response Body: $body") // Log the entire response body

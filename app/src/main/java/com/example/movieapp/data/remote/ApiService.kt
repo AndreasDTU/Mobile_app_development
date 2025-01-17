@@ -60,7 +60,7 @@ interface ApiService {
     ): Response<CastResponse>
 
     @GET("discover/movie")
-    suspend fun getMovieByGenreMultiplePage(
+    suspend fun getMovieByGenre(
         @Query("api_key") apiKey: String,
         @Query("with_genres") genre: Int,
         @Query("language") language: String = "en-US",
