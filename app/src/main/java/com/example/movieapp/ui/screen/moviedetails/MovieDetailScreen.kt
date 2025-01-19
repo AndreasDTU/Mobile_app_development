@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
@@ -19,7 +18,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +27,17 @@ import coil.compose.AsyncImage
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mainscreen.MovieCard
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
+import com.example.movieapp.repositories.RatingsRepository
+import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
@@ -50,6 +59,8 @@ fun MovieDetailScreen(
 
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
+    val averageRating by ratingsViewModel.averageRating.collectAsState() // Observe average rating
+
 
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
@@ -57,6 +68,7 @@ fun MovieDetailScreen(
 
     LaunchedEffect(id) {
         viewModel.fetchSimilarMovies(id)
+        ratingsViewModel.loadAverageRating(id) // Load average rating when screen opens
     }
     AppBackground {
         if (movie != null) {
@@ -76,14 +88,15 @@ fun MovieDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Movie Title
+                // Display Average Rating
                 Text(
-                    text = movie.title ?: "No Title",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    text = "Average Rating: ${averageRating ?: "Loading..."} ★",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
-                // Like Button under the title
 
+                // Like Button under the title
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -132,6 +145,7 @@ fun MovieDetailScreen(
                         Text("Watch Trailer")
                     }
                 }
+
 
                 // Movie Title
                 Spacer(modifier = Modifier.height(16.dp))
@@ -265,35 +279,43 @@ fun MovieDetailScreen(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            ratingsViewModel.removeRating(id)
+                            updatedRating = 0f // Reset the local rating
+                            Toast.makeText(context, "Rating removed!", Toast.LENGTH_SHORT).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text("Remove Rating", color = TextWhite)
+                    }
+                    }
+                Text(
+                    text = "Movies Like This",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    items(similarMovies) { movie ->
+                        MovieCard(navController = navController, movie = movie)
+                    }
+                }
                 }
 
-
-                    // "Movies Like This" Section
-                    Text(
-                        text = "Movies Like This",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
-                    ) {
-                        items(similarMovies) { movie ->
-                            MovieCard(navController = navController, movie = movie)
-                        }
-                    }
+            } else {
+                // Display loading state or message
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
+                }
 
             }
-
-        } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
-            }
-
         }
     }
-}

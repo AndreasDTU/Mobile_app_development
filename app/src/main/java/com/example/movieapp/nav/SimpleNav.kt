@@ -67,8 +67,7 @@ fun SimpleNav() {
     val currentRoute = navBackStackEntry?.destination?.route
     val parent = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
-    val userRepository = UserRepository()
-    val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
+    val ratingsRepository = RatingsRepository(LocalContext.current) // Pass context to RatingsRepository
     val ratingsViewModel = ViewModelProvider(
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
