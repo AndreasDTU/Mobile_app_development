@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.screen.mainscreen.MovieCard
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.LightPurple
@@ -42,6 +45,7 @@ fun MovieDetailScreen(
     ratingsViewModel: RatingsViewModel
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
+    val similarMovies = viewModel.similarMovies.collectAsState().value
     val context = LocalContext.current
 
     val rating = ratingsViewModel.getRatingForMovie(id)
@@ -50,6 +54,10 @@ fun MovieDetailScreen(
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
 
+
+    LaunchedEffect(id) {
+        viewModel.fetchSimilarMovies(id)
+    }
     AppBackground {
         if (movie != null) {
             Column(
@@ -255,6 +263,26 @@ fun MovieDetailScreen(
                                 modifier = Modifier.size(40.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
+                        }
+                    }
+                }
+
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    // Existing movie details UI...
+
+                    // "Movies Like This" Section
+                    Text(
+                        text = "Movies Like This",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        items(similarMovies) { movie ->
+                            MovieCard(navController = navController, movie = movie)
                         }
                     }
                 }
