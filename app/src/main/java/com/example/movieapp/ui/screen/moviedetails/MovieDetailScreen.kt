@@ -267,8 +267,6 @@ fun MovieDetailScreen(
                     }
                 }
 
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    // Existing movie details UI...
 
                     // "Movies Like This" Section
                     Text(
@@ -285,7 +283,7 @@ fun MovieDetailScreen(
                             MovieCard(navController = navController, movie = movie)
                         }
                     }
-                }
+
             }
 
         } else {

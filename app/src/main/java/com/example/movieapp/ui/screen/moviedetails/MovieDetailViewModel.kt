@@ -39,20 +39,24 @@ class MovieDetailViewModel(
         viewModelScope.launch {
             try {
                 val movieDetails = repository.getMovieDetails(movieId)
-                val genres = movieDetails.genres?.map { it.id } ?: emptyList()
-                val castIds = movieDetails.cast?.map { it.id } ?: emptyList()
-                val keywordIds = movieDetails.keywords?.map { it.id } ?: emptyList()
+                val genres = movieDetails.genres.map { it.id }
+                val castIds = movieDetails.cast.map { it.id }
+                val keywordIds = movieDetails.keywords.map { it.id }
 
-                // Fetch movies based on genres, cast, and keywords
+                // Fetch movies based on different criteria
                 val genreBased = repository.getMoviesByGenres(genres)
-                val castBased = repository.getMoviesByCast(castIds.take(5)) // Limit cast fetch
+                val castBased = repository.getMoviesByCast(castIds.take(5)) // Limit cast-based fetch
                 val keywordBased = repository.getMoviesByKeywords(keywordIds)
 
-                // Combine and score movies
+                // Combine results and score them
                 val allMovies = (genreBased + castBased + keywordBased).distinct()
                 val scoredMovies = scoreMovies(allMovies, genres, castIds, keywordIds)
 
-                _similarMovies.value = scoredMovies.take(10) // Top 10 recommendations
+                // Exclude the current movie
+                val filteredMovies = scoredMovies.filter { it.id != movieId }
+
+                // Update the state with top recommendations
+                _similarMovies.value = filteredMovies.take(10) // Limit to top 10
             } catch (e: Exception) {
                 // Handle errors
             }
