@@ -29,7 +29,15 @@ import com.example.movieapp.ui.theme.TextWhite
 fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel = viewModel()) {
     val searchResults by searchViewModel.searchResults.collectAsState()
     val errorMessage by searchViewModel.errorMessage.collectAsState()
+
     var searchQuery by remember { mutableStateOf("") }
+    var selectedYear by remember { mutableStateOf("All") }
+    var selectedGenre by remember { mutableStateOf("All") }
+    var selectedSort by remember { mutableStateOf("Relevance") }
+
+    val genres = listOf("All", "Action", "Comedy", "Drama", "Horror", "Sci-Fi")
+    val years = listOf("All") + (2025 downTo 1900).map { it.toString() }
+    val sortOptions = listOf("Relevance", "Release Date", "Rating")
 
     AppBackground {
         Column(
@@ -37,20 +45,13 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Top Bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp)
-            ) {
-                Text(
-                    text = "Search Movies",
-                    color = TextWhite,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }
+            Text(
+                text = "Advanced Search",
+                color = TextWhite,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -72,8 +73,25 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Filters
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                DropdownMenu(selectedYear, years) { selectedYear = it }
+                DropdownMenu(selectedGenre, genres) { selectedGenre = it }
+                DropdownMenu(selectedSort, sortOptions) { selectedSort = it }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Search Button
             Button(
-                onClick = { searchViewModel.searchMovies(searchQuery) },
+                onClick = {
+                    searchViewModel.searchMoviesWithFilters(
+                        query = searchQuery,
+                        year = selectedYear,
+                        genre = selectedGenre,
+                        sort = selectedSort
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = DarkPurple)
             ) {
@@ -84,18 +102,14 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
 
             // Display Search Results
             if (searchResults.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(searchResults) { movie ->
-                        SearchResultCard(navController = navController, movie = movie)
+                        SearchResultCard(navController, movie)
                     }
                 }
-            } else if (errorMessage != null) {
+            } else if (!errorMessage.isNullOrEmpty()) {
                 Text(
-                    text = errorMessage ?: "An error occurred",
+                    text = errorMessage ?: "Error",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
@@ -104,11 +118,8 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
                 Text(
                     text = "No results found",
                     color = TextWhite,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -168,10 +179,23 @@ fun SearchResultCard(navController: NavController, movie: Movie) {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SearchScreenPreview() {
-    MovieAppTheme {
-        SearchScreen(navController = rememberNavController())
+fun DropdownMenu(selectedItem: String, items: List<String>, onItemSelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        TextButton(onClick = { expanded = true }) {
+            Text(selectedItem)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    onClick = {
+                        onItemSelected(item)
+                        expanded = false
+                    },
+                    text = { Text(item) }
+                )
+            }
+        }
     }
 }

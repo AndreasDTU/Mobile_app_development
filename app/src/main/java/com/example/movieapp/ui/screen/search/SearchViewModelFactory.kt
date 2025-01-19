@@ -14,4 +14,3 @@ class SearchViewModelFactory(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

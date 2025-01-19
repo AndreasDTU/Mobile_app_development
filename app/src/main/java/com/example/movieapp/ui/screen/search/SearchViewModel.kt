@@ -16,11 +16,31 @@ class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    fun searchMovies(query: String) {
+    fun searchMoviesWithFilters(query: String, year: String, genre: String, sort: String) {
         viewModelScope.launch {
             try {
-                val results = repository.searchMovies(query)
-                _searchResults.value = results
+                val allResults = repository.searchMovies(query)
+
+                val filteredByYear = if (year.isNotEmpty() && year != "All") {
+                    allResults.filter { movie ->
+                        val releaseYear = movie.releaseDate?.take(4)
+                        releaseYear == year
+                    }
+                } else allResults
+
+                val filteredByGenre = if (genre != "All") {
+                    filteredByYear.filter { movie ->
+                        movie.genres?.any { it.name.equals(genre, ignoreCase = true) } == true
+                    }
+                } else filteredByYear
+
+                val sortedResults = when (sort) {
+                    "Release Date" -> filteredByGenre.sortedByDescending { it.releaseDate }
+                    "Rating" -> filteredByGenre.sortedByDescending { it.voteAverage }
+                    else -> filteredByGenre
+                }
+
+                _searchResults.value = sortedResults
                 _errorMessage.value = null
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to search movies: ${e.message}"
