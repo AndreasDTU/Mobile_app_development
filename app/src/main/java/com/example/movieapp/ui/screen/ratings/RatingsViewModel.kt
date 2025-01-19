@@ -8,9 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
+
+
 class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewModel() {
     private val _ratings = MutableStateFlow<List<Rating>>(emptyList())
     val ratings: StateFlow<List<Rating>> = _ratings
+
+    private val _averageRating = MutableStateFlow<Float?>(null) // Track the average rating
+    val averageRating: StateFlow<Float?> = _averageRating
+
 
     init {
         loadRatings()
@@ -26,10 +33,25 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
         viewModelScope.launch {
             ratingsRepository.addRating(movieId, title, posterPath, rating)
             loadRatings() // Reload ratings after adding
+            loadRatings() // Reload ratings after adding
+            loadAverageRating(movieId) // Load the average rating
         }
     }
+        fun loadAverageRating(movieId: Int) {
+            viewModelScope.launch {
+                val avgRating = ratingsRepository.getAverageRating(movieId)
+                _averageRating.value = avgRating
+            }
+        }
 
-    fun getRatingForMovie(movieId: Int): Rating? {
+
+        fun getRatingForMovie(movieId: Int): Rating? {
         return ratingsRepository.getRatingForMovie(movieId)
+    }
+
+    fun removeRating(movieId: Int) {
+        viewModelScope.launch {
+            ratingsRepository.removeRating(movieId)
+        }
     }
 }

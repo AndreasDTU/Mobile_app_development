@@ -41,22 +41,19 @@ class MovieRepository(private val context: Context) {
 
 
     suspend fun getMovieDetails(id: Int): Movie {
-        // Fetch movie details
         val movieResponse = apiService.getMovieDetails(id, API_KEY)
         if (!movieResponse.isSuccessful) {
             throw Exception("Failed to load movie details: ${movieResponse.message()}")
         }
         val movie = movieResponse.body() ?: throw Exception("No movie details found")
 
-        // Fetch cast details
         val castResponse = apiService.getMovieCast(id, API_KEY)
-        if (!castResponse.isSuccessful) {
-            throw Exception("Failed to load cast details: ${castResponse.message()}")
-        }
         val cast = castResponse.body()?.cast ?: emptyList()
 
-        // Combine movie details with cast
-        return movie.copy(cast = cast)
+        val keywordResponse = apiService.getMovieKeywords(id, API_KEY)
+        val keywords = keywordResponse.body()?.keywords ?: emptyList()
+
+        return movie.copy(cast = cast, keywords = keywords)
     }
 
     suspend fun searchMovies(query: String): List<Movie> {
@@ -87,6 +84,31 @@ class MovieRepository(private val context: Context) {
             return videos?.firstOrNull { it.type == "Trailer" && it.site == "YouTube" }?.key
         }
         return null
+    }
+
+
+    suspend fun getMoviesByGenres(genreIds: List<Int>): List<Movie> {
+        val response = apiService.discoverMovies(API_KEY, mapOf("with_genres" to genreIds.joinToString(",")))
+        if (response.isSuccessful) {
+            return response.body()?.results ?: emptyList()
+        }
+        return emptyList()
+    }
+
+    suspend fun getMoviesByCast(castIds: List<Int>): List<Movie> {
+        val response = apiService.discoverMovies(API_KEY, mapOf("with_cast" to castIds.joinToString(",")))
+        if (response.isSuccessful) {
+            return response.body()?.results ?: emptyList()
+        }
+        return emptyList()
+    }
+
+    suspend fun getMoviesByKeywords(keywordIds: List<Int>): List<Movie> {
+        val response = apiService.discoverMovies(API_KEY, mapOf("with_keywords" to keywordIds.joinToString(",")))
+        if (response.isSuccessful) {
+            return response.body()?.results ?: emptyList()
+        }
+        return emptyList()
     }
 
 }

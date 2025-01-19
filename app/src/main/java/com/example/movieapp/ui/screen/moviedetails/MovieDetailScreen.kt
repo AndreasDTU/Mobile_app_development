@@ -6,9 +6,10 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
@@ -17,8 +18,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.movieapp.ui.theme.YellowStar
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,12 +25,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.screen.mainscreen.MovieCard
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
+import com.example.movieapp.repositories.RatingsRepository
+import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
-import com.example.movieapp.ui.theme.AccentPink
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
-import com.example.movieapp.ui.theme.YellowStar
 import kotlinx.coroutines.launch
 
 
@@ -45,14 +54,22 @@ fun MovieDetailScreen(
     ratingsViewModel: RatingsViewModel
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
+    val similarMovies = viewModel.similarMovies.collectAsState().value
     val context = LocalContext.current
 
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
+    val averageRating by ratingsViewModel.averageRating.collectAsState() // Observe average rating
+
 
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
 
+
+    LaunchedEffect(id) {
+        viewModel.fetchSimilarMovies(id)
+        ratingsViewModel.loadAverageRating(id) // Load average rating when screen opens
+    }
     AppBackground {
         if (movie != null) {
             Column(
@@ -71,22 +88,21 @@ fun MovieDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Movie Title
+                // Display Average Rating
                 Text(
-                    text = movie.title ?: "No Title",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    text = "Average Rating: ${averageRating ?: "Loading..."} ★",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
-                // Like Button under the title
 
+                // Like Button under the title
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.width(14.dp))
-
                     val isLiked = myListViewModel.isMovieLiked(movie)
                     IconButton(
                         onClick = { myListViewModel.toggleLike(movie) },
@@ -97,46 +113,39 @@ fun MovieDetailScreen(
                         Icon(
                             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = if (isLiked) "Unlike" else "Like",
-                            tint = if (isLiked) AccentPink else Color.Gray,
-                            modifier = Modifier.size(33.dp) // Adjust the icon size
+                            tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray,
+                            modifier = Modifier.size(32.dp) // Adjust the icon size
                         )
                     }
-
                     // Watch Trailer Button
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 45.dp), // Align with Like button spacing
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Button(
-                            onClick = {
-                                coroutineScope.launch {
-                                    val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key
-                                    if (trailerKey != null) {
-                                        val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
-                                        context.startActivity(intent)
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Trailer not available",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val trailerKey = viewModel.getMovieTrailer(id) // Fetch trailer key
+                                if (trailerKey != null) {
+                                    val youtubeUrl = "https://www.youtube.com/watch?v=$trailerKey"
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl))
+                                    context.startActivity(intent)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Trailer not available",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = LightPurple,
-                                contentColor = TextWhite
-                            ),
-                            border = BorderStroke(2.dp, Color.Black) // Black outline
-                        ) {
-                            Text("Watch Trailer")
-                        }
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightPurple,
+                            contentColor = TextWhite
+                        ),
+                        border = BorderStroke(2.dp, Color.Black) // Black outline
+                    ) {
+                        Text("Watch Trailer")
                     }
                 }
+
 
                 // Movie Title
                 Spacer(modifier = Modifier.height(16.dp))
@@ -246,7 +255,7 @@ fun MovieDetailScreen(
                                         )
                                         Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
                                     },
-                                tint = if (star <= updatedRating) Color.Yellow else Color.Gray
+                                tint = if (star <= updatedRating) MaterialTheme.colorScheme.primary else Color.Gray
                             )
                         }
                     }
@@ -266,21 +275,47 @@ fun MovieDetailScreen(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Rated Star",
                                 modifier = Modifier.size(40.dp),
-                                tint = (YellowStar),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            ratingsViewModel.removeRating(id)
+                            updatedRating = 0f // Reset the local rating
+                            Toast.makeText(context, "Rating removed!", Toast.LENGTH_SHORT).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text("Remove Rating", color = TextWhite)
+                    }
+                    }
+                Text(
+                    text = "Movies Like This",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    items(similarMovies) { movie ->
+                        MovieCard(navController = navController, movie = movie)
+                    }
                 }
-            }
+                }
 
-        } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
-            }
+            } else {
+                // Display loading state or message
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
+                }
 
+            }
         }
     }
-}
