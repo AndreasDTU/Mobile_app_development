@@ -50,7 +50,8 @@ import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel()) {
+fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel(), isDarkTheme: Boolean) {
+
     val topMovie = viewModel.topMovie.collectAsState().value // Observing topMovie
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
@@ -58,7 +59,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
 
 
     // Use LazyColumn for vertical scrolling
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             // Top Movie Section
             if (topMovie != null) {
@@ -216,6 +217,6 @@ fun MovieCard(navController: NavController, movie: Movie) {
 @Composable
 fun MainScreenPreview() {
     MovieappTheme {
-        MainScreen(navController = rememberNavController())
+        MainScreen(navController = rememberNavController(), isDarkTheme = true)
     }
 }

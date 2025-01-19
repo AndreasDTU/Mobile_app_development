@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -53,11 +54,14 @@ import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 import kotlinx.coroutines.launch
+import com.example.movieapp.ui.screen.search.SearchViewModel
+import com.example.movieapp.ui.screen.search.SearchViewModelFactory
+import com.example.movieapp.ui.screen.settings.SettingsScreen
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun simplenav() {
+fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -66,7 +70,7 @@ fun simplenav() {
     val scope = rememberCoroutineScope()
 
     // Define pages
-    val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "MyFriendsScreen")
+    val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "ProfileScreen")
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val parent = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
@@ -77,94 +81,66 @@ fun simplenav() {
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
-    AppBackground {
+
+    AppBackground(isDarkTheme = isDarkTheme) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title= {
+                    title = {
                         Text(
                             text = "FLICK-FINDER",
-                            color = TextWhite,
-                            style = MaterialTheme.typography.titleSmall
+                            color = if (isDarkTheme) Color.White else Color.Black,
+                            style = MaterialTheme.typography.titleMedium
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("ProfileScreen")}) {
+                        IconButton(onClick = { navController.navigate("SettingsScreen") }) {
                             Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile",
-                                tint = TextWhite
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
+                                tint = if (isDarkTheme) Color.White else Color.Black
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = DarkPurple
+                        containerColor = if (isDarkTheme) DarkPurple else Color(0xFFFFC0CB) // Light pink for light theme
                     )
                 )
             },
             bottomBar = {
                 BottomAppBar(
-                    containerColor = DarkPurple,
-                    contentColor = TextWhite
+                    containerColor = if (isDarkTheme) DarkPurple else Color(0xFFFFA6C9), // Lighter pink for light theme
+                    contentColor = if (isDarkTheme) Color.White else Color.Black
                 ) {
-                    NavigationBarItem(
-                        selected = parent == "MainScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(0)
-                            }
-                        },
-                        label = { Text("Home") },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = LightPurple) }
-                    )
-
-                    NavigationBarItem(
-                        selected = parent == "SearchScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(1)
-                            }
-                        },
-                        label = { Text("Search") },
-                        icon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = LightPurple) }
-                    )
-
-                    NavigationBarItem(
-                        selected = parent == "MyListScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
-                                }
-                                pagerState.animateScrollToPage(2)
-                            }
-                        },
-                        label = { Text("My List") },
-                        icon = {
-                            Icon(Icons.AutoMirrored.Filled.List, contentDescription = "My List", tint = LightPurple
-                            )
+                    listOf("MainScreen", "SearchScreen", "MyListScreen", "ProfileScreen").forEachIndexed { index, page ->
+                        val icon = when (page) {
+                            "MainScreen" -> Icons.Default.Home
+                            "SearchScreen" -> Icons.Default.Search
+                            "MyListScreen" -> Icons.AutoMirrored.Filled.List
+                            "ProfileScreen" -> Icons.Default.Person
+                            else -> Icons.Default.Home
                         }
-                    )
 
-                    NavigationBarItem(
-                        selected = parent == "MyFriendsScreen",
-                        onClick = {
-                            scope.launch {
-                                navController.navigate("SwipeableScreens") {
-                                    popUpTo("SwipeableScreens") { inclusive = true }
+                        NavigationBarItem(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch {
+                                    navController.navigate("SwipeableScreens") {
+                                        popUpTo("SwipeableScreens") { inclusive = true }
+                                    }
+                                    pagerState.animateScrollToPage(index)
                                 }
-                                pagerState.animateScrollToPage(3)
+                            },
+                            label = { Text(page.replace("Screen", "")) },
+                            icon = {
+                                Icon(
+                                    icon,
+                                    contentDescription = page,
+                                    tint = if (pagerState.currentPage == index) LightPurple else TextWhite
+                                )
                             }
-                        },
-                        label = { Text("Profile") },
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Friends", tint = LightPurple) }
-                    )
+                        )
+                    }
                 }
             }
         ) { innerPadding ->
@@ -173,23 +149,38 @@ fun simplenav() {
                 startDestination = "SwipeableScreens",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                // Swipeable Screens
                 composable("SwipeableScreens") {
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
                         when (pages[page]) {
-                            "MainScreen" -> MainScreen(navController, ViewModelProvider(
+                            "MainScreen" -> MainScreen(
+                                navController = navController,
+                                viewModel = ViewModelProvider(
+                                    LocalViewModelStoreOwner.current!!,
+                                    MovieViewModelFactory(repository)
+                                )[MovieViewModel::class.java],
+                                isDarkTheme = isDarkTheme // Pass the isDarkTheme value here
+                            )
+                            "SearchScreen" -> SearchScreen(navController, ViewModelProvider(
                                 LocalViewModelStoreOwner.current!!,
-                                MovieViewModelFactory(repository)
-                            )[MovieViewModel::class.java])
-                            "SearchScreen" -> SearchScreen()
-                            "MyListScreen" -> MyList(navController,ViewModelProvider(
-                                LocalViewModelStoreOwner.current!!,
-                                MyListViewModelFactory(repository)
-                            )[MyListViewModel::class.java])
-                            "MyFriendsScreen" -> MyFriendsScreen()
+                                SearchViewModelFactory(repository)
+                            )[SearchViewModel::class.java], isDarkTheme = isDarkTheme)
+                            "MyListScreen" -> MyList(
+                                navController = navController,
+                                viewModel = ViewModelProvider(
+                                    LocalViewModelStoreOwner.current!!,
+                                    MyListViewModelFactory(repository)
+                                )[MyListViewModel::class.java],
+                                isDarkTheme = isDarkTheme // Pass isDarkTheme here
+                            )
+                            "ProfileScreen" -> ProfileScreen(
+                                userViewModel = UserViewModel(),
+                                ratingsViewModel = ratingsViewModel,
+                                onEditClick = { navController.navigate("EditProfileScreen") },
+                                onViewMoreRatingsClick = { navController.navigate("RatingsScreen") }
+                            )
                         }
                     }
                 }
@@ -198,7 +189,11 @@ fun simplenav() {
                         LocalViewModelStoreOwner.current!!,
                         MovieViewModelFactory(repository)
                     )[MovieViewModel::class.java]
-                    MainScreen(navController, viewModel)
+                    MainScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        isDarkTheme = isDarkTheme // Pass isDarkTheme here
+                    )
                 }
                 composable(
                     "MovieDetailScreen/{id}",
@@ -216,21 +211,27 @@ fun simplenav() {
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
+
                     MovieDetailScreen(
-                        id,
-                        navController,
-                        detailViewModel,
-                        myListViewModel,
-                        ratingsViewModel,
+                        id = id,
+                        navController = navController,
+                        viewModel = detailViewModel,
+                        myListViewModel = myListViewModel,
+                        ratingsViewModel = ratingsViewModel,
+                        isDarkTheme = isDarkTheme // Pass the isDarkTheme value here
                     )
                 }
-                composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
-                    val viewModel =ViewModelProvider(
+                    val viewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-                    MyList(navController, viewModel) }
+                    MyList(
+                        navController = navController,
+                        viewModel = viewModel,
+                        isDarkTheme = isDarkTheme // Pass the theme state
+                    )
+                }
                 composable("ProfileScreen") {
                     ProfileScreen(
                         userViewModel = UserViewModel(),
@@ -242,7 +243,8 @@ fun simplenav() {
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
-                        onSaveClick = {navController.popBackStack()}
+                        onSaveClick = { navController.popBackStack() },
+                        isDarkTheme = isDarkTheme // Pass the theme state
                     )
                 }
                 composable("RatingsScreen") {
@@ -251,7 +253,21 @@ fun simplenav() {
                         movieRepository = repository
                     )
                 }
+                composable(route = "SearchScreen") {
+                    val viewModel = ViewModelProvider(
+                        LocalViewModelStoreOwner.current!!,
+                        SearchViewModelFactory(repository)
+                    )[SearchViewModel::class.java]
 
+                    SearchScreen(navController = navController, searchViewModel = viewModel, isDarkTheme = true)
+                }
+
+                composable("SettingsScreen") {
+                    SettingsScreen(
+                        isDarkTheme = isDarkTheme,
+                        onThemeChange = onThemeChange
+                    )
+                }
             }
         }
     }

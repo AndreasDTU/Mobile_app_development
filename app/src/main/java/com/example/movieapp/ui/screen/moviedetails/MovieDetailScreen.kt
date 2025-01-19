@@ -40,7 +40,8 @@ fun MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
     myListViewModel: MyListViewModel,
-    ratingsViewModel: RatingsViewModel
+    ratingsViewModel: RatingsViewModel,
+    isDarkTheme: Boolean
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
     val context = LocalContext.current
@@ -54,7 +55,7 @@ fun MovieDetailScreen(
     // Mutable state to track the updated rating
     var updatedRating by remember { mutableStateOf(userRating) }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         if (movie != null) {
             // Wrap the content with a LazyColumn to enable scrolling
             Column(

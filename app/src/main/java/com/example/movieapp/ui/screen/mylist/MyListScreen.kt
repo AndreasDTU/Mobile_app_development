@@ -22,9 +22,10 @@ import com.example.movieapp.ui.theme.TextWhite
 @Composable
 fun MyList(
     navController: NavController,
-    viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    isDarkTheme: Boolean
 ) {
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

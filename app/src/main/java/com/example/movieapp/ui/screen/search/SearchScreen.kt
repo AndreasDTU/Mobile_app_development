@@ -26,12 +26,12 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel = viewModel()) {
+fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel = viewModel(), isDarkTheme: Boolean) {
     val searchResults by searchViewModel.searchResults.collectAsState()
     val errorMessage by searchViewModel.errorMessage.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -172,6 +172,6 @@ fun SearchResultCard(navController: NavController, movie: Movie) {
 @Composable
 fun SearchScreenPreview() {
     MovieappTheme {
-        SearchScreen(navController = rememberNavController())
+        SearchScreen(navController = rememberNavController(), isDarkTheme = true)
     }
 }

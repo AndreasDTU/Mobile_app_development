@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,10 +21,10 @@ import com.example.movieapp.ui.theme.TextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
+fun FirstTimeScreen(isDarkTheme: Boolean,  onLoginClick: () -> Unit, onGetStartedClick: () -> Unit, onThemeToggle: (Boolean) -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -88,12 +89,21 @@ fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
                 // Login Text
                 Text(
                     text = "Already have an account?\nClick here to login",
-                    color = LightPurple,
+                    color = if (isDarkTheme) LightPurple else Color.Gray,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .clickable { onLoginClick() }
                         .padding(top = 16.dp),
                     textAlign = TextAlign.Center
+                )
+
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = { onThemeToggle(it) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = LightPurple,
+                        uncheckedThumbColor = Color.Gray
+                    )
                 )
             }
         }
@@ -103,5 +113,6 @@ fun FirstTimeScreen(onLoginClick: () -> Unit, onGetStartedClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun FirstTimeScreenPreview() {
-    FirstTimeScreen(onLoginClick = {}, onGetStartedClick = {})
+    FirstTimeScreen(onLoginClick = {}, onGetStartedClick = {}, isDarkTheme = true, onThemeToggle = {})
 }
+

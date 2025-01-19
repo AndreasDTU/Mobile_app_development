@@ -20,11 +20,11 @@ import com.example.movieapp.ui.theme.TextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogInScreen(onLoginClick: () -> Unit) {
+fun LogInScreen(isDarkTheme: Boolean, onLoginClick: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
     // Generic App Background
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -103,5 +103,5 @@ fun LogInScreen(onLoginClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun LogInScreenPreview() {
-    LogInScreen(onLoginClick = {})
+    LogInScreen(onLoginClick = {}, isDarkTheme = true)
 }

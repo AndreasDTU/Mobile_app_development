@@ -17,12 +17,13 @@ import com.example.movieapp.viewmodels.UserViewModel
 @Composable
 fun EditProfileScreen(
     userViewModel: UserViewModel = UserViewModel(),
-    onSaveClick: () -> Unit
+    onSaveClick: () -> Unit,
+    isDarkTheme: Boolean
 ) {
     val userProfile = userViewModel.userProfile.collectAsState()
 
     // Wrap the screen in the AppBackground composable
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,6 +96,6 @@ fun EditProfileScreen(
 @Composable
 fun EditProfileScreenPreview() {
     MovieappTheme {
-        EditProfileScreen(onSaveClick = {})
+        EditProfileScreen(onSaveClick = {}, isDarkTheme = true)
     }
 }

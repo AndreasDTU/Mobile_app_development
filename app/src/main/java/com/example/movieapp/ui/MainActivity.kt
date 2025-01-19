@@ -14,23 +14,32 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-MovieappTheme {
-    val context = LocalContext.current
-    val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
-    if (isFirstLaunch.value) {
-        // Show FirstTimeScreen if this is the first launch
-        FirstTimeScreen(
-            onLoginClick = { /* Navigate to Login Screen */ },
-            onGetStartedClick = {
-                markFirstTimeLaunchComplete(context)
-                isFirstLaunch.value = false
+            // State for theme switching
+            var isDarkTheme by remember { mutableStateOf(false) }
+
+            MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
+                val context = LocalContext.current
+                val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
+
+                if (isFirstLaunch.value) {
+                    // Show FirstTimeScreen for the first launch
+                    FirstTimeScreen(
+                        isDarkTheme = isDarkTheme, // Pass theme state
+                        onLoginClick = { /* Navigate to Login Screen */ },
+                        onGetStartedClick = {
+                            markFirstTimeLaunchComplete(context)
+                            isFirstLaunch.value = false
+                        },
+                        onThemeToggle = { isDarkTheme = it } // Allow theme switching
+                    )
+                } else {
+                    // Show main app navigation
+                    simplenav(
+                        isDarkTheme = isDarkTheme,
+                        onThemeChange = { isDarkTheme = it } // Handle theme switching
+                    )
+                }
             }
-        )
-    } else {
-        // Show main screen
-        simplenav() // Replace with your main screen composable function
-    }
-}
         }
     }
 

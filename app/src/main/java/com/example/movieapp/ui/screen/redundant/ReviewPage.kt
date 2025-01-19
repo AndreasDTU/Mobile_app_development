@@ -22,8 +22,8 @@ import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
-fun ReviewPageUI() {
-    AppBackground {
+fun ReviewPageUI(isDarkTheme: Boolean) {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -215,5 +215,5 @@ fun BottomNavigationPlaceholder() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewReviewPage() {
-    ReviewPageUI()
+    ReviewPageUI(isDarkTheme = true)
 }

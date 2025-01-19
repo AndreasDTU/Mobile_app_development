@@ -20,7 +20,8 @@ fun ProfileNav(
     navController: NavHostController,
     userViewModel: UserViewModel = UserViewModel(),
     ratingsRepository: RatingsRepository,
-    movieRepository: MovieRepository
+    movieRepository: MovieRepository,
+    isDarkTheme: Boolean
 ) {
     NavHost(navController = navController, startDestination = "profile") {
         composable("profile") {
@@ -39,7 +40,8 @@ fun ProfileNav(
         composable("editProfile") {
             EditProfileScreen(
                 userViewModel = userViewModel, // Pass userViewModel to EditProfileScreen
-                onSaveClick = { navController.popBackStack() } // Handle saving and returning to the previous screen
+                onSaveClick = { navController.popBackStack() }, // Handle saving and returning to the previous screen
+                isDarkTheme = isDarkTheme // Pass the theme state here
             )
         }
         composable("ratingsScreen") {
