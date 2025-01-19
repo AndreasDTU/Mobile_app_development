@@ -12,6 +12,7 @@ data class Movie(
     @Json(name = "genres") val genres: List<Genre>?,
     @Json(name = "runtime") val runtime: Int?,
     @Json(name = "status") val status: String?,
-    @Json(name = "cast") val cast: List<Cast>?,
+    @Json(name = "cast") val cast: List<Cast>? = null,
     var isLiked: Boolean = false // Local property
 )
+

@@ -7,6 +7,7 @@ import com.example.movieapp.repositories.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import android.util.Log
 
 class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
 
@@ -21,19 +22,23 @@ class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
             try {
                 val allResults = repository.searchMovies(query)
 
+                // Filter by year
                 val filteredByYear = if (year.isNotEmpty() && year != "All") {
-                    allResults.filter { movie ->
-                        val releaseYear = movie.releaseDate?.take(4)
-                        releaseYear == year
-                    }
-                } else allResults
+                    allResults.filter { it.releaseDate?.startsWith(year) == true }
+                } else {
+                    allResults
+                }
 
+                // Filter by genre
                 val filteredByGenre = if (genre != "All") {
                     filteredByYear.filter { movie ->
                         movie.genres?.any { it.name.equals(genre, ignoreCase = true) } == true
                     }
-                } else filteredByYear
+                } else {
+                    filteredByYear
+                }
 
+                // Sort results
                 val sortedResults = when (sort) {
                     "Release Date" -> filteredByGenre.sortedByDescending { it.releaseDate }
                     "Rating" -> filteredByGenre.sortedByDescending { it.voteAverage }

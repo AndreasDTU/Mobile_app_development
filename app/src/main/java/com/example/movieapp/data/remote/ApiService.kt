@@ -56,5 +56,23 @@ interface ApiService {
         @Query("page") page: Int = 1
     ): Response<MovieResponse>
 
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetails(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String
+    ): Response<Movie>
 
+    @GET("movie/{movie_id}/credits")
+    suspend fun getMovieCast(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String
+    ): Response<CastResponse>
+
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("api_key") apiKey: String,
+        @Query("query") query: String
+    ): Response<MovieResponse>
 }
+
+
