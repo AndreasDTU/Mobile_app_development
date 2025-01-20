@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
 
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
@@ -52,7 +53,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             // Top Movie Section
             if (topMovie != null) {
-                TopMovieCard(navController = navController, movie = topMovie)
+                TopMovieCard(navController = navController, movie = topMovie, isDarkTheme = isDarkTheme)
             } else {
                 Text(
                     text = "No Featured Movie Available",
@@ -64,35 +65,35 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
 
             // Trending Movies Section
             SectionTitle("Trending Movies")
-            MovieRow(navController = navController, movies = popularMovies)
+            MovieRow(navController = navController, movies = popularMovies, isDarkTheme = isDarkTheme)
 
             // Scary Movies Section
             SectionTitle("Scary Movies")
-            MovieRow(navController = navController, movies = scaryMovies)
+            MovieRow(navController = navController, movies = scaryMovies, isDarkTheme = isDarkTheme)
 
             // Funny Movies Section
             SectionTitle("Funny Movies")
-            MovieRow(navController = navController, movies = funnyMovies)
+            MovieRow(navController = navController, movies = funnyMovies, isDarkTheme = isDarkTheme)
 
             // Action Movies Section
             SectionTitle("Action Movies")
-            MovieRow(navController = navController, movies = actionMovies)
+            MovieRow(navController = navController, movies = actionMovies, isDarkTheme = isDarkTheme)
 
             // Drama Movies Section
             SectionTitle("Drama Movies")
-            MovieRow(navController = navController, movies = dramaMovies)
+            MovieRow(navController = navController, movies = dramaMovies, isDarkTheme = isDarkTheme)
 
             // Adventure Movies Section
             SectionTitle("Adventure Movies")
-            MovieRow(navController = navController, movies = adventureMovies)
+            MovieRow(navController = navController, movies = adventureMovies, isDarkTheme = isDarkTheme)
 
             // Romance Movies Section
             SectionTitle("Romance Movies")
-            MovieRow(navController = navController, movies = romanceMovies)
+            MovieRow(navController = navController, movies = romanceMovies, isDarkTheme = isDarkTheme)
 
             // Science Fiction Movies Section
             SectionTitle("Science Fiction Movies")
-            MovieRow(navController = navController, movies = sciFiMovies)
+            MovieRow(navController = navController, movies = sciFiMovies, isDarkTheme = isDarkTheme)
 
     }
         }
@@ -118,8 +119,16 @@ fun Modifier.gradientOverlay(brush: Brush): Modifier = this.then(
     }
 )
 
+
+
 @Composable
-fun TopMovieCard(navController: NavController, movie: Movie) {
+fun TopMovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) {
+      val cardColor = if (isDarkTheme) {
+             DarkPurple
+         } else {
+             Color(0xFFFFC0CB) // Baby pink color
+               
+         }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,7 +138,7 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
                 navController.navigate("MovieDetailScreen/${movie.id}")
             },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = DarkPurple)
+        colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -141,7 +150,7 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
-                    .background(DarkPurple.copy(alpha = 0.85f))
+                    .background(cardColor.copy(alpha = 0.85f))
             ) {
                 Text(
                     text = movie.title,
@@ -157,18 +166,23 @@ fun TopMovieCard(navController: NavController, movie: Movie) {
 }
 
 @Composable
-fun MovieRow(navController: NavController, movies: List<Movie>) {
+fun MovieRow(navController: NavController, movies: List<Movie>, isDarkTheme: Boolean) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(movies) { movie ->
-            MovieCard(navController = navController, movie = movie)
+            MovieCard(navController = navController, movie = movie, isDarkTheme = isDarkTheme)
         }
     }
 }
 
 @Composable
-fun MovieCard(navController: NavController, movie: Movie) {
+fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) {
+     val cardColor = if (isDarkTheme) {
+            DarkPurple
+        } else {
+            Color(0xFFFFC0CB) // Baby pink color
+        }
     Card(
         modifier = Modifier
             .size(width = 160.dp, height = 240.dp)
@@ -176,7 +190,7 @@ fun MovieCard(navController: NavController, movie: Movie) {
                 navController.navigate("MovieDetailScreen/${movie.id}")
             },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = DarkPurple)
+        colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

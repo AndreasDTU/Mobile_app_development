@@ -21,7 +21,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = MediumPurple, // Keep the dark purple theme as is
+    primary = MediumPurple,
     secondary = LightPurple,
     tertiary = AccentPink,
     background = DarkPurple,

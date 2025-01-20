@@ -302,7 +302,7 @@ fun MovieDetailScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
                     items(similarMovies) { movie ->
-                        MovieCard(navController = navController, movie = movie)
+                        MovieCard(navController = navController, movie = movie, isDarkTheme = true)
                     }
                 }
                 }
