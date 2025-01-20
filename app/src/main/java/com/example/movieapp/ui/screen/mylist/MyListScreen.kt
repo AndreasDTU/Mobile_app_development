@@ -1,9 +1,11 @@
 package com.example.movieapp.ui.screen.mylist
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -77,18 +79,49 @@ fun MyList(
 }
 
 @Composable
-fun FavoritesGrid(navController: NavController, movies: List<Movie>, onLikeClicked: (Movie) -> Unit) {
+fun FavoritesGrid(
+    navController: NavController,
+    movies: List<Movie>,
+    onLikeClicked: (Movie) -> Unit
+) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // Two columns for a balanced look
+        columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(4.dp), // Reduced padding
+        contentPadding = PaddingValues(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(movies.size) { index ->
-            val movie = movies[index]
-            MovieCard(navController = navController, movie = movie)
+        items(movies, key = { it.id }) { movie ->
+            SwipeableMovieCard(
+                navController = navController,
+                movie = movie,
+                onSwipeToUnlike = { onLikeClicked(movie) }
+            )
         }
+    }
+}
+
+@Composable
+fun SwipeableMovieCard(
+    navController: NavController,
+    movie: Movie,
+    onSwipeToUnlike: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(0.68f)
+            .padding(4.dp)
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures { change, dragAmount ->
+                    change.consume()
+                    if (dragAmount > -100) { // Threshold for swipe
+                        onSwipeToUnlike()
+                    }
+                }
+            }
+    ) {
+        MovieCard(navController = navController, movie = movie)
     }
 }
 
