@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var isDarkTheme by remember {
-                mutableStateOf(false)
+                mutableStateOf(true)
             }
                 MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
                     val context = LocalContext.current
