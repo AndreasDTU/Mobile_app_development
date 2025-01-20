@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Define a default font family
-val DefaultFontFamily = FontFamily.Monospace
+val DefaultFontFamily = FontFamily.Default
 
 // Material Typography styles
 val Typography = Typography(

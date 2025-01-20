@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -18,6 +20,22 @@ import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.TextWhite
+
+@Composable
+fun LikedMoviesCount(viewModel: MyListViewModel) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Liked Movies: ${viewModel.favorites.size}",
+            style = MaterialTheme.typography.titleMedium,
+            color = TextWhite
+        )
+    }
+}
 
 @Composable
 fun MyList(
@@ -31,12 +49,29 @@ fun MyList(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Favorites section rendered as a grid
-            FavoritesGrid(
-                navController = navController,
-                movies = viewModel.favorites,
-                onLikeClicked = { movie -> viewModel.toggleLike(movie) }
-            )
+            // Use the LikedMoviesCount composable
+            LikedMoviesCount(viewModel = viewModel)
+
+            // Conditionally display the grid or an empty state message
+            if (viewModel.favorites.isNotEmpty()) {
+                FavoritesGrid(
+                    navController = navController,
+                    movies = viewModel.favorites,
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) }
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No liked movies yet!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextWhite
+                    )
+                }
+            }
         }
     }
 }
@@ -44,15 +79,14 @@ fun MyList(
 @Composable
 fun FavoritesGrid(navController: NavController, movies: List<Movie>, onLikeClicked: (Movie) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(2), // Two columns for a balanced look
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(4.dp), // Reduced padding
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(movies.size) { index ->
             val movie = movies[index]
-            // Use the updated MovieCard design from MainScreen
             MovieCard(navController = navController, movie = movie)
         }
     }
@@ -63,12 +97,13 @@ fun MovieCard(navController: NavController, movie: Movie) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(0.75f) // Match the same aspect ratio as MainScreen
+            .aspectRatio(0.68f) // Slightly shorter cards for a more cinematic feel
             .clickable {
                 navController.navigate("MovieDetailScreen/${movie.id}")
             },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = DarkPurple)
+        colors = CardDefaults.cardColors(containerColor = DarkPurple.copy(alpha = 0.85f)),
+        elevation = CardDefaults.cardElevation(4.dp) // Add subtle elevation for better contrast
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -77,14 +112,16 @@ fun MovieCard(navController: NavController, movie: Movie) {
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                 contentDescription = movie.title,
-                modifier = Modifier.fillMaxHeight(0.85f) // Adjust height to match MainScreen
+                modifier = Modifier
+                    .fillMaxHeight(0.85f)
+                    .clip(MaterialTheme.shapes.medium) // Clip the image for rounded corners
             )
             Text(
                 text = movie.title,
                 style = MaterialTheme.typography.labelMedium,
                 color = TextWhite,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(6.dp)
                     .align(Alignment.CenterHorizontally),
                 maxLines = 1
             )

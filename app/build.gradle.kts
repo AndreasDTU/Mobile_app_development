@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -65,6 +67,9 @@ dependencies {
     implementation (libs.moshi )// Moshi core library
     implementation( libs.moshi.kotlin )// Kotlin support for Moshi
     implementation (libs.converter.moshi)
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,4 +77,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // Import the Firebase BoM
+    implementation(libs.firebase.bom)
+
+    // Add Firebase services
+   // implementation(libs.firebase.analytics)
+   // implementation(libs.firebase.firestore)
+    //implementation(libs.firebase.auth)
+    //implementation(libs.firebase.storage)
 }

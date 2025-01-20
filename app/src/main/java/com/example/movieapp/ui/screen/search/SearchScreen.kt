@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,11 +19,10 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
+import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.MovieappTheme
 import com.example.movieapp.ui.theme.TextWhite
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,10 +58,10 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             TextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search movies...", color = LightPurple) },
+                placeholder = { Text("Search movies...", color = DarkPurple) },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = MaterialTheme.colorScheme.background,
-                    focusedIndicatorColor = LightPurple,
+                    focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = MaterialTheme.colorScheme.background
                 ),
                 modifier = Modifier
@@ -75,12 +75,12 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             Button(
                 onClick = { searchViewModel.searchMovies(searchQuery) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = LightPurple)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkPurple)
             ) {
                 Text("Search", color = TextWhite)
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Display Search Results
             if (searchResults.isNotEmpty()) {

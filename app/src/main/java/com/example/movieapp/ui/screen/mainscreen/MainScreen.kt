@@ -2,8 +2,6 @@ package com.example.movieapp.ui.screen.mainscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -19,35 +17,21 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.MediumPurple
 import com.example.movieapp.ui.theme.MovieappTheme
 import com.example.movieapp.ui.theme.TextWhite
 
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import android.util.Log
 import androidx.compose.ui.draw.drawWithContent
 
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
-import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel(), isDarkTheme: Boolean) {
@@ -56,6 +40,11 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
     val popularMovies = viewModel.popularMovies.collectAsState().value
     val scaryMovies = viewModel.scaryMovies.collectAsState().value
     val funnyMovies = viewModel.funnyMovies.collectAsState().value
+    val actionMovies = viewModel.actionMovies.collectAsState().value
+    val dramaMovies = viewModel.dramaMovies.collectAsState().value
+    val adventureMovies = viewModel.adventureMovies.collectAsState().value
+    val romanceMovies = viewModel.romanceMovies.collectAsState().value
+    val sciFiMovies = viewModel.sciFiMovies.collectAsState().value
 
 
     // Use LazyColumn for vertical scrolling
@@ -68,45 +57,43 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
                 Text(
                     text = "No Featured Movie Available",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
             // Trending Movies Section
-            Text(
-                text = "Trending Movies",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-            LazyRow {
-                items(popularMovies) { movie ->
-                    MovieCard(navController = navController, movie = movie)
-                }
-            }
+            SectionTitle("Trending Movies")
+            MovieRow(navController = navController, movies = popularMovies)
 
             // Scary Movies Section
-            Text(
-                text = "Scary Movies",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-            LazyRow {
-                items(scaryMovies) { movie ->
-                    MovieCard(navController = navController, movie = movie)
-                }
-            }
+            SectionTitle("Scary Movies")
+            MovieRow(navController = navController, movies = scaryMovies)
 
             // Funny Movies Section
-            Text(
-                text = "Funny Movies",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-            LazyRow {
-                items(funnyMovies) { movie ->
-                    MovieCard(navController = navController, movie = movie)
-            }
-        }
+            SectionTitle("Funny Movies")
+            MovieRow(navController = navController, movies = funnyMovies)
+
+            // Action Movies Section
+            SectionTitle("Action Movies")
+            MovieRow(navController = navController, movies = actionMovies)
+
+            // Drama Movies Section
+            SectionTitle("Drama Movies")
+            MovieRow(navController = navController, movies = dramaMovies)
+
+            // Adventure Movies Section
+            SectionTitle("Adventure Movies")
+            MovieRow(navController = navController, movies = adventureMovies)
+
+            // Romance Movies Section
+            SectionTitle("Romance Movies")
+            MovieRow(navController = navController, movies = romanceMovies)
+
+            // Science Fiction Movies Section
+            SectionTitle("Science Fiction Movies")
+            MovieRow(navController = navController, movies = sciFiMovies)
+
     }
         }
 }
@@ -118,9 +105,9 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
 fun SectionTitle(title: String) {
     Text(
         text = title,
-        color = LightPurple,
+        color = MaterialTheme.colorScheme.onPrimary,
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(8.dp)
     )
 }
 

@@ -1,9 +1,6 @@
 package com.example.movieapp.nav
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -20,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,12 +36,8 @@ import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
-import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
-import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
-import com.example.movieapp.ui.screen.redundant.EditProfileScreen
-import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.ratings.RatingsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
@@ -76,12 +69,11 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val parent = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
     val userRepository = UserRepository()
-    val ratingsRepository = RatingsRepository(userRepository) // Manage ratings through UserRepository
+    val ratingsRepository = RatingsRepository(LocalContext.current) // Manage ratings through UserRepository
     val ratingsViewModel = ViewModelProvider(
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
-
     AppBackground(isDarkTheme = isDarkTheme) {
         Scaffold(
             topBar = {
@@ -112,7 +104,7 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                     containerColor = if (isDarkTheme) DarkPurple else Color(0xFFFFA6C9), // Lighter pink for light theme
                     contentColor = if (isDarkTheme) Color.White else Color.Black
                 ) {
-                    listOf("MainScreen", "SearchScreen", "MyListScreen", "ProfileScreen").forEachIndexed { index, page ->
+                    pages.forEachIndexed { index, page ->
                         val icon = when (page) {
                             "MainScreen" -> Icons.Default.Home
                             "SearchScreen" -> Icons.Default.Search
@@ -138,7 +130,14 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                                     contentDescription = page,
                                     tint = if (pagerState.currentPage == index) LightPurple else TextWhite
                                 )
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = TextWhite,
+                                selectedTextColor = TextWhite,
+                                indicatorColor = Color.Transparent,
+                                unselectedIconColor = TextWhite,
+                                unselectedTextColor = TextWhite
+                            )
                         )
                     }
                 }

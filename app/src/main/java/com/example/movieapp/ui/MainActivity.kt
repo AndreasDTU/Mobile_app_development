@@ -4,54 +4,53 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.example.movieapp.nav.simplenav
 import com.example.movieapp.ui.screen.redundant.FirstTimeScreen
 import com.example.movieapp.ui.theme.MovieappTheme
+import kotlinx.coroutines.*
+import com.example.movieapp.ui.screen.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install Splash Screen
+        val splashScreen = installSplashScreen()
+
+        // Declare splash-related states
+        var isLoading by mutableStateOf(true)
+
+        // Keep splash visible until initialization is complete
+        splashScreen.setKeepOnScreenCondition { isLoading }
+
         super.onCreate(savedInstanceState)
+
         setContent {
-            // State for theme switching
-            var isDarkTheme by remember { mutableStateOf(false) }
+            var isDarkTheme by remember {
+                mutableStateOf(false)
+            }
+                MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
+                    val context = LocalContext.current
 
-            MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
-                val context = LocalContext.current
-                val isFirstLaunch = remember { mutableStateOf(isFirstTimeLaunch(context)) }
+                    var mainScreenDataLoaded by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        // Launch both splash and main screen resource loading concurrently
+                        withContext(Dispatchers.Default) {
+                            // Simulate data loading for the Main Screen
+                            delay(1000) // Replace this with actual resource loading logic
+                            mainScreenDataLoaded = true
+                        }
+                    }
+                    // Finalize splash screen logic
+                    isLoading = false
 
-                if (isFirstLaunch.value) {
-                    // Show FirstTimeScreen for the first launch
-                    FirstTimeScreen(
-                        isDarkTheme = isDarkTheme, // Pass theme state
-                        onLoginClick = { /* Navigate to Login Screen */ },
-                        onGetStartedClick = {
-                            markFirstTimeLaunchComplete(context)
-                            isFirstLaunch.value = false
-                        },
-                        onThemeToggle = { isDarkTheme = it } // Allow theme switching
-                    )
-                } else {
-                    // Show main app navigation
+                     // Allow theme switching
                     simplenav(
                         isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it } // Handle theme switching
-                    )
+                        onThemeChange = { isDarkTheme = it }
+                    ) // Replace with your main screen composable function
                 }
             }
-        }
-    }
-
-    private fun isFirstTimeLaunch(context: Context): Boolean {
-        val sharedPreferences =
-            context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("is_first_time_launch", true)
-    }
-
-    private fun markFirstTimeLaunchComplete(context: Context) {
-        val sharedPreferences =
-            context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("is_first_time_launch", false).apply()
     }
 }

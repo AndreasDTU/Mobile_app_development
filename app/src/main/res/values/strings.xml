@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Movieapp</string>
+    <string name="app_name">Flick-Finder</string>
+    <string name="splash_title">FLICK-FINDER</string>
+    <string name="splash_subtitle">Your movie companion</string>
 </resources>
