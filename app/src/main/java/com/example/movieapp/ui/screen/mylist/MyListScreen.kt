@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -18,6 +19,16 @@ import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.TextWhite
+
+@Composable
+fun LikedMoviesCount(viewModel: MyListViewModel) {
+    Text(
+        text = "Liked Movies: ${viewModel.favorites.size}",
+        style = MaterialTheme.typography.titleMedium, // Adjust this based on your desired appearance
+        color = Color.White,
+        modifier = Modifier.padding(16.dp)
+    )
+}
 
 @Composable
 fun MyList(
@@ -30,12 +41,29 @@ fun MyList(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Favorites section rendered as a grid
-            FavoritesGrid(
-                navController = navController,
-                movies = viewModel.favorites,
-                onLikeClicked = { movie -> viewModel.toggleLike(movie) }
-            )
+            // Use the LikedMoviesCount composable
+            LikedMoviesCount(viewModel = viewModel)
+
+            // Conditionally display the grid or an empty state message
+            if (viewModel.favorites.isNotEmpty()) {
+                FavoritesGrid(
+                    navController = navController,
+                    movies = viewModel.favorites,
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) }
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No liked movies yet!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextWhite
+                    )
+                }
+            }
         }
     }
 }
