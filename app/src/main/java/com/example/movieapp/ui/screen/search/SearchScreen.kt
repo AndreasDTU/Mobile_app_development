@@ -21,17 +21,27 @@ import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
-import com.example.movieapp.ui.theme.MovieAppTheme
+import com.example.movieapp.ui.theme.MovieappTheme
 import com.example.movieapp.ui.theme.TextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel = viewModel()) {
+fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel = viewModel(), isDarkTheme: Boolean) {
     val searchResults by searchViewModel.searchResults.collectAsState()
     val errorMessage by searchViewModel.errorMessage.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
+        val searchColor = if (isDarkTheme){
+            DarkPurple
+    } else {
+            Color.White
+    }
+        val iconColor = if (isDarkTheme){
+            DarkPurple
+        } else {
+            Color(0xFFFFC0CB)
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,7 +68,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             TextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search movies...", color = DarkPurple) },
+                placeholder = { Text("Search movies...", color = searchColor) },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     focusedIndicatorColor = Color.Transparent,
@@ -75,7 +85,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             Button(
                 onClick = { searchViewModel.searchMovies(searchQuery) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkPurple)
+                colors = ButtonDefaults.buttonColors(containerColor = iconColor)
             ) {
                 Text("Search", color = TextWhite)
             }
@@ -171,7 +181,7 @@ fun SearchResultCard(navController: NavController, movie: Movie) {
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
-    MovieAppTheme {
-        SearchScreen(navController = rememberNavController())
+    MovieappTheme {
+        SearchScreen(navController = rememberNavController(), isDarkTheme = true)
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -37,7 +38,6 @@ import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
-import com.example.movieapp.ui.screen.redundant.MyFriendsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
@@ -49,11 +49,12 @@ import com.example.movieapp.ui.theme.TextWhite
 import kotlinx.coroutines.launch
 import com.example.movieapp.ui.screen.search.SearchViewModel
 import com.example.movieapp.ui.screen.search.SearchViewModelFactory
+import com.example.movieapp.ui.screen.settings.SettingsScreen
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SimpleNav() {
+fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -62,53 +63,53 @@ fun SimpleNav() {
     val scope = rememberCoroutineScope()
 
     // Define pages
-    val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "MyFriendsScreen")
+    val pages = listOf("MainScreen", "SearchScreen", "MyListScreen", "ProfileScreen")
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val parent = navBackStackEntry?.arguments?.getString("parent") ?: currentRoute
     val repository = MovieRepository(LocalContext.current)
-    val ratingsRepository = RatingsRepository(LocalContext.current) // Pass context to RatingsRepository
+    val userRepository = UserRepository()
+    val ratingsRepository = RatingsRepository(LocalContext.current) // Manage ratings through UserRepository
     val ratingsViewModel = ViewModelProvider(
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
-
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
                         Text(
                             text = "FLICK-FINDER",
-                            color = TextWhite,
+                            color = if (isDarkTheme) Color.White else Color.Black,
                             style = MaterialTheme.typography.titleMedium
                         )
                     },
                     actions = {
-                        IconButton(onClick = { navController.navigate("ProfileScreen") }) {
+                        IconButton(onClick = { navController.navigate("SettingsScreen") }) {
                             Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile",
-                                tint = TextWhite
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
+                                tint = if (isDarkTheme) Color.White else Color.Black
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = DarkPurple
+                        containerColor = if (isDarkTheme) DarkPurple else Color(0xFFFFC0CB) // Light pink for light theme
                     )
                 )
             },
             bottomBar = {
                 BottomAppBar(
-                    containerColor = DarkPurple,
-                    contentColor = TextWhite
+                    containerColor = if (isDarkTheme) DarkPurple else Color(0xFFFFA6C9), // Lighter pink for light theme
+                    contentColor = if (isDarkTheme) Color.White else Color.Black
                 ) {
                     pages.forEachIndexed { index, page ->
                         val icon = when (page) {
                             "MainScreen" -> Icons.Default.Home
                             "SearchScreen" -> Icons.Default.Search
                             "MyListScreen" -> Icons.AutoMirrored.Filled.List
-                            "MyFriendsScreen" -> Icons.Default.Person
+                            "ProfileScreen" -> Icons.Default.Person
                             else -> Icons.Default.Home
                         }
 
@@ -153,19 +154,32 @@ fun SimpleNav() {
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
                         when (pages[page]) {
-                            "MainScreen" -> MainScreen(navController, ViewModelProvider(
-                                LocalViewModelStoreOwner.current!!,
-                                MovieViewModelFactory(repository)
-                            )[MovieViewModel::class.java])
+                            "MainScreen" -> MainScreen(
+                                navController = navController,
+                                viewModel = ViewModelProvider(
+                                    LocalViewModelStoreOwner.current!!,
+                                    MovieViewModelFactory(repository)
+                                )[MovieViewModel::class.java],
+                                isDarkTheme = isDarkTheme // Pass the isDarkTheme value here
+                            )
                             "SearchScreen" -> SearchScreen(navController, ViewModelProvider(
                                 LocalViewModelStoreOwner.current!!,
                                 SearchViewModelFactory(repository)
-                            )[SearchViewModel::class.java])
-                            "MyListScreen" -> MyList(navController, ViewModelProvider(
-                                LocalViewModelStoreOwner.current!!,
-                                MyListViewModelFactory(repository)
-                            )[MyListViewModel::class.java])
-                            "MyFriendsScreen" -> MyFriendsScreen()  //DET ER HER DU SKAL ÆNDRE TIL PROFILE
+                            )[SearchViewModel::class.java], isDarkTheme = isDarkTheme)
+                            "MyListScreen" -> MyList(
+                                navController = navController,
+                                viewModel = ViewModelProvider(
+                                    LocalViewModelStoreOwner.current!!,
+                                    MyListViewModelFactory(repository)
+                                )[MyListViewModel::class.java],
+                                isDarkTheme = isDarkTheme // Pass isDarkTheme here
+                            )
+                            "ProfileScreen" -> ProfileScreen(
+                                userViewModel = UserViewModel(),
+                                ratingsViewModel = ratingsViewModel,
+                                onEditClick = { navController.navigate("EditProfileScreen") },
+                                onViewMoreRatingsClick = { navController.navigate("RatingsScreen") }
+                            )
                         }
                     }
                 }
@@ -174,7 +188,11 @@ fun SimpleNav() {
                         LocalViewModelStoreOwner.current!!,
                         MovieViewModelFactory(repository)
                     )[MovieViewModel::class.java]
-                    MainScreen(navController, viewModel)
+                    MainScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        isDarkTheme = isDarkTheme // Pass isDarkTheme here
+                    )
                 }
                 composable(
                     "MovieDetailScreen/{id}",
@@ -192,21 +210,26 @@ fun SimpleNav() {
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
+
                     MovieDetailScreen(
-                        id,
-                        navController,
-                        detailViewModel,
-                        myListViewModel,
-                        ratingsViewModel,
+                        id = id,
+                        navController = navController,
+                        viewModel = detailViewModel,
+                        myListViewModel = myListViewModel,
+                        ratingsViewModel = ratingsViewModel,
+                        isDarkTheme = isDarkTheme // Pass the isDarkTheme value here
                     )
                 }
-                composable("MyFriendsScreen") { MyFriendsScreen() }
                 composable("MyListScreen") {
                     val viewModel = ViewModelProvider(
                         LocalViewModelStoreOwner.current!!,
                         MyListViewModelFactory(repository)
                     )[MyListViewModel::class.java]
-                    MyList(navController, viewModel)
+                    MyList(
+                        navController = navController,
+                        viewModel = viewModel,
+                        isDarkTheme = isDarkTheme // Pass the theme state
+                    )
                 }
                 composable("ProfileScreen") {
                     ProfileScreen(
@@ -219,7 +242,8 @@ fun SimpleNav() {
                 composable("EditProfileScreen") {
                     EditProfileScreen(
                         userViewModel = UserViewModel(),
-                        onSaveClick = { navController.popBackStack() }
+                        onSaveClick = { navController.popBackStack() },
+                        isDarkTheme = isDarkTheme // Pass the theme state
                     )
                 }
                 composable("RatingsScreen") {
@@ -234,7 +258,14 @@ fun SimpleNav() {
                         SearchViewModelFactory(repository)
                     )[SearchViewModel::class.java]
 
-                    SearchScreen(navController = navController, searchViewModel = viewModel)
+                    SearchScreen(navController = navController, searchViewModel = viewModel, isDarkTheme = true)
+                }
+
+                composable("SettingsScreen") {
+                    SettingsScreen(
+                        isDarkTheme = isDarkTheme,
+                        onThemeChange = onThemeChange
+                    )
                 }
             }
         }

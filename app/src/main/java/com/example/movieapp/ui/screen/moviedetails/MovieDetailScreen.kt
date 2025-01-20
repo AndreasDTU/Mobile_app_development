@@ -51,7 +51,8 @@ fun MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = viewModel(),
     myListViewModel: MyListViewModel,
-    ratingsViewModel: RatingsViewModel
+    ratingsViewModel: RatingsViewModel,
+    isDarkTheme: Boolean
 ) {
     val movie = viewModel.movieDetails.collectAsState().value
     val similarMovies = viewModel.similarMovies.collectAsState().value
@@ -64,13 +65,12 @@ fun MovieDetailScreen(
 
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
-
-
     LaunchedEffect(id) {
         viewModel.fetchSimilarMovies(id)
         ratingsViewModel.loadAverageRating(id) // Load average rating when screen opens
     }
-    AppBackground {
+
+    AppBackground(isDarkTheme = isDarkTheme) {
         if (movie != null) {
             Column(
                 modifier = Modifier
@@ -302,7 +302,7 @@ fun MovieDetailScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
                     items(similarMovies) { movie ->
-                        MovieCard(navController = navController, movie = movie)
+                        MovieCard(navController = navController, movie = movie, isDarkTheme = true)
                     }
                 }
                 }

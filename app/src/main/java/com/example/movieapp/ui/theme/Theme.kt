@@ -7,6 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // Define Dark and Light color schemes
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFFFFC0CB), // Pink for primary color
+    secondary = Color(0xFFFFA6C9), // Slightly lighter pink for secondary elements
+    tertiary = Color(0xFFF48FB1), // Accent pink for highlights
+    background = Color(0xFFFFC0CB), // Light pink background
+    surface = Color(0xFFFFE4E1), // Light pink surface
+    onPrimary = Color.Black, // Black text on pink
+    onSecondary = Color.Black,
+    onTertiary = Color.Black,
+    onBackground = Color.Black,
+    onSurface = Color.Black
+)
+
 private val DarkColorScheme = darkColorScheme(
     primary = MediumPurple,
     secondary = LightPurple,
@@ -20,24 +33,11 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = TextGray
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = MediumPurple,
-    secondary = LightPurple,
-    tertiary = AccentPink,
-    background = Color(0xFFF2F2F2), // Lys baggrund for lyse temaer
-    surface = Color.White,
-    onPrimary = TextWhite,
-    onSecondary = TextGray,
-    onTertiary = TextWhite,
-    onBackground = Color.Black,
-    onSurface = Color.Black
-)
-
 
 @Composable
-fun MovieAppTheme(
+fun MovieappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
