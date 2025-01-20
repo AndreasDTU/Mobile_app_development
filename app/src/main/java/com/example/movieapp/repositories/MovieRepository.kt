@@ -12,15 +12,14 @@ import com.google.gson.reflect.TypeToken
 
 class MovieRepository(private val context: Context) {
     private val apiService = ApiClient.instance
-    private val sharedPreferences = context.getSharedPreferences("movie_prefs", Context.MODE_PRIVATE)
+    private val sharedPreferences =
+        context.getSharedPreferences("movie_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
-
-
 
 
     suspend fun getPopularMovies(): List<Movie> {
         val response = apiService.getPopularMovies(API_KEY)
-        Log.d("Movies" , response.toString())
+        Log.d("Movies", response.toString())
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         } else {
@@ -89,4 +88,23 @@ class MovieRepository(private val context: Context) {
         return null
     }
 
+    suspend fun getMoviesByYearAndGenre(year: String, genreId: Int?): List<Movie> {
+        val response = if (genreId != null) {
+            apiService.getMovieByGenre(apiKey = API_KEY, genre = genreId, page = 1)
+        } else {
+            apiService.getPopularMovies(apiKey = API_KEY, page = 1)
+        }
+
+        Log.d("MovieRepository", "API response successful: ${response.isSuccessful}")
+        if (response.isSuccessful) {
+            val movies = response.body()?.results?.filter {
+                year == "All" || it.releaseDate?.startsWith(year) == true
+            }
+            Log.d("MovieRepository", "Movies filtered by year: ${movies?.size}")
+            return movies ?: emptyList()
+        } else {
+            Log.e("MovieRepository", "Error: ${response.errorBody()?.string()}")
+            return emptyList()
+        }
+    }
 }

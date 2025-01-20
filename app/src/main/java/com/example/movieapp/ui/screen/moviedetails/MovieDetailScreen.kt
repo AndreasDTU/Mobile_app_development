@@ -29,6 +29,7 @@ import com.example.movieapp.ui.components.AppBackground
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.theme.AccentPink
+import com.example.movieapp.ui.theme.DarkPurple
 import com.example.movieapp.ui.theme.LightPurple
 import com.example.movieapp.ui.theme.TextWhite
 import com.example.movieapp.ui.theme.YellowStar
@@ -92,13 +93,13 @@ fun MovieDetailScreen(
                         onClick = { myListViewModel.toggleLike(movie) },
                         modifier = Modifier
                             .padding(vertical = 8.dp)
-                            .size(48.dp) // Adjust the size as needed
+                            .size(48.dp)
                     ) {
                         Icon(
                             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = if (isLiked) "Unlike" else "Like",
-                            tint = if (isLiked) AccentPink else Color.Gray,
-                            modifier = Modifier.size(33.dp) // Adjust the icon size
+                            tint = if (isLiked) LightPurple else Color.Gray,
+                            modifier = Modifier.size(33.dp)
                         )
                     }
 
@@ -246,7 +247,7 @@ fun MovieDetailScreen(
                                         )
                                         Toast.makeText(context, "Rating saved!", Toast.LENGTH_SHORT).show()
                                     },
-                                tint = if (star <= updatedRating) Color.Yellow else Color.Gray
+                                tint = if (star <= updatedRating) LightPurple else Color.Gray
                             )
                         }
                     }
@@ -266,7 +267,7 @@ fun MovieDetailScreen(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Rated Star",
                                 modifier = Modifier.size(40.dp),
-                                tint = (YellowStar),
+                                tint = (LightPurple),
                             )
                         }
                     }

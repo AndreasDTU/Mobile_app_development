@@ -32,11 +32,9 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
     var searchQuery by remember { mutableStateOf("") }
     var selectedYear by remember { mutableStateOf("All") }
     var selectedGenre by remember { mutableStateOf("All") }
-    var selectedSort by remember { mutableStateOf("Relevance") }
 
     val genres = listOf("All", "Action", "Comedy", "Drama", "Horror", "Sci-Fi") // Static genres
     val years = listOf("All") + (2025 downTo 1900).map { it.toString() }
-    val sortOptions = listOf("Relevance", "Release Date", "Rating")
 
     AppBackground {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -68,7 +66,6 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterDropdown(label = "Year", selectedItem = selectedYear, items = years) { selectedYear = it }
                 FilterDropdown(label = "Genre", selectedItem = selectedGenre, items = genres) { selectedGenre = it }
-                FilterDropdown(label = "Sort", selectedItem = selectedSort, items = sortOptions) { selectedSort = it }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -79,8 +76,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
                     searchViewModel.searchMoviesWithFilters(
                         query = searchQuery,
                         year = selectedYear,
-                        genre = selectedGenre,
-                        sort = selectedSort
+                        genre = selectedGenre
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -107,7 +103,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
                 )
             } else {
                 Text(
-                    text = "No results found",
+                    text = "No movies found",
                     color = TextWhite,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()

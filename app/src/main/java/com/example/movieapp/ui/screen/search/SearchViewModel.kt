@@ -17,37 +17,36 @@ class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    fun searchMoviesWithFilters(query: String, year: String, genre: String, sort: String) {
+    fun searchMoviesWithFilters(query: String, year: String, genre: String) {
         viewModelScope.launch {
             try {
-                val allResults = repository.searchMovies(query)
+                Log.d("SearchViewModel", "Query: $query, Year: $year, Genre: $genre")
 
-                // Filter by year
-                val filteredByYear = if (year.isNotEmpty() && year != "All") {
-                    allResults.filter { it.releaseDate?.startsWith(year) == true }
+                // Check if the query is provided
+                val results = if (query.isNotBlank()) {
+                    // Search by query
+                    repository.searchMovies(query)
                 } else {
-                    allResults
+                    // If no query, use year and genre filters
+                    val genreMap = mapOf(
+                        "Action" to 28,
+                        "Comedy" to 35,
+                        "Drama" to 18,
+                        "Horror" to 27,
+                        "Sci-Fi" to 878
+                    )
+                    val genreId = if (genre != "All") genreMap[genre] else null
+                    repository.getMoviesByYearAndGenre(year, genreId)
                 }
 
-                // Filter by genre
-                val filteredByGenre = if (genre != "All") {
-                    filteredByYear.filter { movie ->
-                        movie.genres?.any { it.name.equals(genre, ignoreCase = true) } == true
-                    }
-                } else {
-                    filteredByYear
-                }
+                // Update results
+                _searchResults.value = results
+                _errorMessage.value = if (results.isEmpty()) "No movies found" else null
 
-                // Sort results
-                val sortedResults = when (sort) {
-                    "Release Date" -> filteredByGenre.sortedByDescending { it.releaseDate }
-                    "Rating" -> filteredByGenre.sortedByDescending { it.voteAverage }
-                    else -> filteredByGenre
-                }
+                Log.d("SearchViewModel", "Results size: ${results.size}")
 
-                _searchResults.value = sortedResults
-                _errorMessage.value = null
             } catch (e: Exception) {
+                Log.e("SearchViewModel", "Error during search: ${e.message}")
                 _errorMessage.value = "Failed to search movies: ${e.message}"
             }
         }
