@@ -68,11 +68,11 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
             MovieRow(navController = navController, movies = popularMovies, isDarkTheme = isDarkTheme)
 
             // Scary Movies Section
-            SectionTitle("Scary Movies")
+            SectionTitle("Horror Movies")
             MovieRow(navController = navController, movies = scaryMovies, isDarkTheme = isDarkTheme)
 
             // Funny Movies Section
-            SectionTitle("Funny Movies")
+            SectionTitle("Comedy Movies")
             MovieRow(navController = navController, movies = funnyMovies, isDarkTheme = isDarkTheme)
 
             // Action Movies Section
