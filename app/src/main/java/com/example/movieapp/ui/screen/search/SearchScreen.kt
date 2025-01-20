@@ -32,6 +32,16 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
     var searchQuery by remember { mutableStateOf("") }
 
     AppBackground(isDarkTheme = isDarkTheme) {
+        val searchColor = if (isDarkTheme){
+            DarkPurple
+    } else {
+            Color.White
+    }
+        val iconColor = if (isDarkTheme){
+            DarkPurple
+        } else {
+            Color(0xFFFFC0CB)
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,7 +68,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             TextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search movies...", color = DarkPurple) },
+                placeholder = { Text("Search movies...", color = searchColor) },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     focusedIndicatorColor = Color.Transparent,
@@ -75,7 +85,7 @@ fun SearchScreen(navController: NavController, searchViewModel: SearchViewModel 
             Button(
                 onClick = { searchViewModel.searchMovies(searchQuery) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkPurple)
+                colors = ButtonDefaults.buttonColors(containerColor = iconColor)
             ) {
                 Text("Search", color = TextWhite)
             }
