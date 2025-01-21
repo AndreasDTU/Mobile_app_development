@@ -1,5 +1,6 @@
 package com.example.movieapp.nav
 
+import EditProfileScreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +35,6 @@ import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
 import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
-import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
