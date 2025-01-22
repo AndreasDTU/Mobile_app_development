@@ -20,23 +20,21 @@ class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
     fun searchMoviesWithFilters(query: String, year: String, genre: String) {
         viewModelScope.launch {
             try {
-                Log.d("SearchViewModel", "Starting search with query='$query', year='$year', genre='$genre'")
-
-                // Fetch movies from API
+                // Fetch all movies (use query if provided, otherwise fetch all)
                 val allResults = if (query.isNotBlank()) {
                     repository.searchMovies(query)
                 } else {
-                    repository.getPopularMovies()
+                    repository.getPopularMovies() // Fetch all popular movies when no query
                 }
 
                 // Filter by year
-                val filteredByYear = if (year != "All" && year.isNotEmpty()) {
+                val filteredByYear = if (year.isNotEmpty() && year != "All") {
                     allResults.filter { it.releaseDate?.startsWith(year) == true }
                 } else {
                     allResults
                 }
 
-                // Filter by genre
+                // Map genres to IDs
                 val genreMap = mapOf(
                     "Action" to 28,
                     "Comedy" to 35,
@@ -44,21 +42,24 @@ class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
                     "Horror" to 27,
                     "Sci-Fi" to 878
                 )
-                val genreId = genreMap[genre]
-                val filteredByGenre = if (genre != "All" && genreId != null) {
+
+                // Filter by genre
+                val filteredByGenre = if (genre != "All") {
                     filteredByYear.filter { movie ->
-                        movie.genres?.any { it.id == genreId } == true
+                        movie.genres?.any { it.name.equals(genre, ignoreCase = true) } == true
                     }
                 } else {
-                    filteredByYear
+                    filteredByYear // When "All" is selected, bypass genre filtering
                 }
 
-                // Update results
+                // Update the search results
                 _searchResults.value = filteredByGenre
                 _errorMessage.value = if (filteredByGenre.isEmpty()) "No movies found" else null
 
-                Log.d("SearchViewModel", "Search completed: ${filteredByGenre.size} movies found.")
+                // Debug logs
+                Log.d("SearchViewModel", "Results size: ${filteredByGenre.size}")
             } catch (e: Exception) {
+                // Handle errors
                 Log.e("SearchViewModel", "Error during search: ${e.message}")
                 _errorMessage.value = "Failed to search movies: ${e.message}"
             }
