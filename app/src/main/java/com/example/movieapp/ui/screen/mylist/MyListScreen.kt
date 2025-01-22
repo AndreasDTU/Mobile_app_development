@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -59,7 +60,8 @@ fun MyList(
                 FavoritesGrid(
                     navController = navController,
                     movies = viewModel.favorites,
-                    onLikeClicked = { movie -> viewModel.toggleLike(movie) }
+                    onLikeClicked = { movie -> viewModel.toggleLike(movie) },
+                    isDarkTheme = isDarkTheme
                 )
             } else {
                 Box(
@@ -82,7 +84,8 @@ fun MyList(
 fun FavoritesGrid(
     navController: NavController,
     movies: List<Movie>,
-    onLikeClicked: (Movie) -> Unit
+    onLikeClicked: (Movie) -> Unit,
+    isDarkTheme: Boolean
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -95,7 +98,8 @@ fun FavoritesGrid(
             SwipeableMovieCard(
                 navController = navController,
                 movie = movie,
-                onSwipeToUnlike = { onLikeClicked(movie) }
+                onSwipeToUnlike = { onLikeClicked(movie) },
+                isDarkTheme = isDarkTheme
             )
         }
     }
@@ -105,7 +109,8 @@ fun FavoritesGrid(
 fun SwipeableMovieCard(
     navController: NavController,
     movie: Movie,
-    onSwipeToUnlike: () -> Unit
+    onSwipeToUnlike: () -> Unit,
+    isDarkTheme: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -121,12 +126,17 @@ fun SwipeableMovieCard(
                 }
             }
     ) {
-        MovieCard(navController = navController, movie = movie)
+        MovieCard(navController = navController, movie = movie, isDarkTheme = isDarkTheme)
     }
 }
 
 @Composable
-fun MovieCard(navController: NavController, movie: Movie) {
+fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) {
+    val cardColor = if (isDarkTheme) {
+        DarkPurple
+    } else {
+        Color(0xFFFFC0CB) // Baby pink color
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,7 +145,7 @@ fun MovieCard(navController: NavController, movie: Movie) {
                 navController.navigate("MovieDetailScreen/${movie.id}")
             },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = DarkPurple.copy(alpha = 0.85f)),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
         elevation = CardDefaults.cardElevation(4.dp) // Add subtle elevation for better contrast
     ) {
         Column(
