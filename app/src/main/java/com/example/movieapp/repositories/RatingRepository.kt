@@ -54,11 +54,7 @@ class RatingsRepository(context: Context) {
 
                 val totalRating = snapshot.getDouble("totalRating") ?: 0.0
                 val ratingCount = snapshot.getDouble("ratingCount") ?: 0.0
-                val previousRating = ratingsMap[movieId]?.rating ?: 0f
 
-
-                // Adjust the total rating by removing the previous rating and adding the new one
-                val updatedTotalRating = totalRating - previousRating + rating
 
                 // Update totalRating and ratingCount in Firestore
                 transaction.update(document, mapOf(

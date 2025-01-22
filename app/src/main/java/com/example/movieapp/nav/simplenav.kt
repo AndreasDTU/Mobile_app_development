@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -34,10 +35,10 @@ import com.example.movieapp.ui.screen.moviedetails.MovieDetailScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModel
 import com.example.movieapp.ui.screen.mylist.MyList
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
-import com.example.movieapp.ui.screen.redundant.EditProfileScreen
 import com.example.movieapp.ui.screen.moviedetails.MovieDetailViewModelFactory
 import com.example.movieapp.ui.screen.mylist.MyListViewModel
 import com.example.movieapp.ui.screen.mylist.MyListViewModelFactory
+import com.example.movieapp.ui.screen.ratings.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.RatingsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
 import com.example.movieapp.ui.screen.ratings.RatingsViewModelFactory
@@ -84,6 +85,17 @@ fun simplenav(movieViewModel: MovieViewModel, isDarkTheme: Boolean, onThemeChang
                             color = if (isDarkTheme) Color.White else Color.Black,
                             style = MaterialTheme.typography.titleMedium
                         )
+                    },
+                    navigationIcon = {
+                        if (navController.previousBackStackEntry != null) {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = if (isDarkTheme) Color.White else Color.Black
+                                )
+                            }
+                        }
                     },
                     actions = {
                         IconButton(onClick = { navController.navigate("SettingsScreen") }) {
