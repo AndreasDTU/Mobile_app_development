@@ -54,7 +54,7 @@ import com.example.movieapp.ui.screen.settings.SettingsScreen
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
+fun simplenav(movieViewModel: MovieViewModel, isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -156,10 +156,7 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                         when (pages[page]) {
                             "MainScreen" -> MainScreen(
                                 navController = navController,
-                                viewModel = ViewModelProvider(
-                                    LocalViewModelStoreOwner.current!!,
-                                    MovieViewModelFactory(repository)
-                                )[MovieViewModel::class.java],
+                                viewModel = movieViewModel,
                                 isDarkTheme = isDarkTheme // Pass the isDarkTheme value here
                             )
                             "SearchScreen" -> SearchScreen(navController, ViewModelProvider(
@@ -184,13 +181,9 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                     }
                 }
                 composable("MainScreen") {
-                    val viewModel = ViewModelProvider(
-                        LocalViewModelStoreOwner.current!!,
-                        MovieViewModelFactory(repository)
-                    )[MovieViewModel::class.java]
                     MainScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = movieViewModel,
                         isDarkTheme = isDarkTheme // Pass isDarkTheme here
                     )
                 }

@@ -17,7 +17,7 @@
 
         <!-- Splash Activity -->
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.screen.splash.SplashActivity"
             android:theme="@style/Theme.MovieApp.SplashScreen"
             android:exported="true">
             <intent-filter>

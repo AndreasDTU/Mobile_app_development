@@ -35,7 +35,7 @@ import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel(), isDarkTheme: Boolean) {
+fun MainScreen(navController: NavController, viewModel: MovieViewModel, isDarkTheme: Boolean) {
 
     val topMovie = viewModel.topMovie.collectAsState().value // Observing topMovie
     val popularMovies = viewModel.popularMovies.collectAsState().value
@@ -112,12 +112,6 @@ fun SectionTitle(title: String) {
     )
 }
 
-fun Modifier.gradientOverlay(brush: Brush): Modifier = this.then(
-    Modifier.drawWithContent {
-        drawContent()
-        drawRect(brush = brush)
-    }
-)
 
 
 
@@ -214,10 +208,3 @@ fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) 
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MovieappTheme {
-        MainScreen(navController = rememberNavController(), isDarkTheme = true)
-    }
-}

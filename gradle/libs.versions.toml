@@ -2,6 +2,7 @@
 agp = "8.7.0"
 coilCompose = "2.2.2"
 converterGson = "2.9.0"
+coreSplashscreenVersion = "1.0.0"
 firebaseBom = "33.7.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
@@ -25,9 +26,11 @@ uiToolingPreview = "1.5.0"
 firebaseCommonKtx = "21.0.0"
 firebaseFirestoreKtx = "25.0.0"
 coreSplashscreen = "1.0.1"
+appcompat = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen-v100 = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreenVersion" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation-compose-v270 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
@@ -63,6 +66,7 @@ ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", versio
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
