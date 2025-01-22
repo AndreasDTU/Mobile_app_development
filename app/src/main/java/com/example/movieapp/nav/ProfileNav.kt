@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.movieapp.repositories.MovieRepository
 import com.example.movieapp.repositories.RatingsRepository
-import com.example.movieapp.ui.screen.redundant.EditProfileScreen
+import com.example.movieapp.ui.screen.ratings.EditProfileScreen
 import com.example.movieapp.ui.screen.ratings.ProfileScreen
 import com.example.movieapp.ui.screen.ratings.RatingsScreen
 import com.example.movieapp.ui.screen.ratings.RatingsViewModel
@@ -35,6 +35,7 @@ fun ProfileNav(
                 ratingsViewModel = ratingsViewModel,
                 onEditClick = { navController.navigate("editProfile") },
                 onViewMoreRatingsClick = { navController.navigate("ratingsScreen") }
+                // Pass the theme state here
             )
         }
         composable("editProfile") {
