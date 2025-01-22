@@ -35,6 +35,7 @@ fun ProfileNav(
                 ratingsViewModel = ratingsViewModel,
                 onEditClick = { navController.navigate("editProfile") },
                 onViewMoreRatingsClick = { navController.navigate("ratingsScreen") }
+                // Pass the theme state here
             )
         }
         composable("editProfile") {
