@@ -36,15 +36,10 @@ class MyListViewModel(private val repository: MovieRepository) : ViewModel() {
     }
 
     fun toggleLike(movie: Movie) {
-        val modified = if (favorites.any { it.id == movie.id }) {
-            favorites.removeIf { it.id == movie.id }
-            true
+        if (favorites.removeIf { it.id == movie.id }) {
+            saveMovies()
         } else {
             favorites.add(movie)
-            true
-        }
-
-        if (modified) {
             saveMovies()
         }
     }

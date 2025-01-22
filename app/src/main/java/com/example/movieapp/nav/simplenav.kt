@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -84,6 +85,17 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                             color = if (isDarkTheme) Color.White else Color.Black,
                             style = MaterialTheme.typography.titleMedium
                         )
+                    },
+                    navigationIcon = {
+                        if (navController.previousBackStackEntry != null) {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = if (isDarkTheme) Color.White else Color.Black
+                                )
+                            }
+                        }
                     },
                     actions = {
                         IconButton(onClick = { navController.navigate("SettingsScreen") }) {

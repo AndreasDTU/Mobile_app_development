@@ -18,10 +18,10 @@ class UserRepository() {
     // Example JSON string representing a user profile
     private val userProfileJson = """
         {
-            "name": "Johnny",
-            "age": 29,
-            "location": "USA",
-            "favorite_genre": "Romantic",
+            "name": "Unknown",
+            "age": 0,
+            "location": "Unknown",
+            "favorite_genre": "Unknown",
              "ratings": []
         }
     """

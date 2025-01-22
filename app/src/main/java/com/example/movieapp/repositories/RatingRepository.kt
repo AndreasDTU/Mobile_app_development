@@ -54,11 +54,7 @@ class RatingsRepository(context: Context) {
 
                 val totalRating = snapshot.getDouble("totalRating") ?: 0.0
                 val ratingCount = snapshot.getDouble("ratingCount") ?: 0.0
-                val previousRating = ratingsMap[movieId]?.rating ?: 0f
 
-
-                // Adjust the total rating by removing the previous rating and adding the new one
-                val updatedTotalRating = totalRating - previousRating + rating
 
                 // Update totalRating and ratingCount in Firestore
                 transaction.update(document, mapOf(
@@ -103,8 +99,7 @@ fun getRatingForMovie(movieId: Int): Rating? {
             val ratingCount = document.getDouble("ratingCount") ?: 0.0
 
             // * Calculate average rating
-            if (ratingCount == 0.0) 0f else (totalRating / ratingCount).toFloat()
-        } catch (e: Exception) {
+            if (ratingCount == 0.0) 0f else String.format("%.1f", totalRating / ratingCount).toFloat()        } catch (e: Exception) {
             0f // Return 0 if no document exists
         }
     }
