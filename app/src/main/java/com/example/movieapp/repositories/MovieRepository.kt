@@ -12,15 +12,14 @@ import com.google.gson.reflect.TypeToken
 
 class MovieRepository(private val context: Context) {
     private val apiService = ApiClient.instance
-    private val sharedPreferences = context.getSharedPreferences("movie_prefs", Context.MODE_PRIVATE)
+    private val sharedPreferences =
+        context.getSharedPreferences("movie_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
-
-
 
 
     suspend fun getPopularMovies(): List<Movie> {
         val response = apiService.getPopularMovies(API_KEY)
-        Log.d("Movies" , response.toString())
+        Log.d("Movies", response.toString())
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         } else {
@@ -59,8 +58,13 @@ class MovieRepository(private val context: Context) {
     suspend fun searchMovies(query: String): List<Movie> {
         val response = apiService.searchMovies(API_KEY, query)
         if (response.isSuccessful) {
-            return response.body()?.results ?: emptyList()
-        } else return emptyList()
+            val results = response.body()?.results ?: emptyList()
+            Log.d("MovieRepository", "Search results: ${results.size}")
+            return results
+        } else {
+            Log.e("MovieRepository", "Search failed: ${response.message()}")
+            return emptyList()
+        }
     }
 
 
@@ -88,7 +92,8 @@ class MovieRepository(private val context: Context) {
 
 
     suspend fun getMoviesByGenres(genreIds: List<Int>): List<Movie> {
-        val response = apiService.discoverMovies(API_KEY, mapOf("with_genres" to genreIds.joinToString(",")))
+        val response =
+            apiService.discoverMovies(API_KEY, mapOf("with_genres" to genreIds.joinToString(",")))
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         }
@@ -96,7 +101,8 @@ class MovieRepository(private val context: Context) {
     }
 
     suspend fun getMoviesByCast(castIds: List<Int>): List<Movie> {
-        val response = apiService.discoverMovies(API_KEY, mapOf("with_cast" to castIds.joinToString(",")))
+        val response =
+            apiService.discoverMovies(API_KEY, mapOf("with_cast" to castIds.joinToString(",")))
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         }
@@ -104,11 +110,41 @@ class MovieRepository(private val context: Context) {
     }
 
     suspend fun getMoviesByKeywords(keywordIds: List<Int>): List<Movie> {
-        val response = apiService.discoverMovies(API_KEY, mapOf("with_keywords" to keywordIds.joinToString(",")))
+        val response = apiService.discoverMovies(
+            API_KEY,
+            mapOf("with_keywords" to keywordIds.joinToString(","))
+        )
         if (response.isSuccessful) {
             return response.body()?.results ?: emptyList()
         }
         return emptyList()
     }
 
+    suspend fun getMoviesByYearAndGenre(year: String, genreId: Int?): List<Movie> {
+        val response = if (genreId != null) {
+            apiService.getMovieByGenre(apiKey = API_KEY, genre = genreId, page = 1)
+        } else {
+            apiService.getPopularMovies(apiKey = API_KEY, page = 1)
+        }
+
+        Log.d("MovieRepository", "API response successful: ${response.isSuccessful}")
+
+        if (response.isSuccessful) {
+            // Log the full response for debugging
+            Log.d("MovieRepository", "Response Body: ${response.body()}")
+
+            // Filter movies by year
+            val movies = response.body()?.results?.filter {
+                year == "All" || it.releaseDate?.startsWith(year) == true
+            }
+
+            Log.d("MovieRepository", "Movies filtered by year: ${movies?.size}")
+            return movies ?: emptyList()
+        } else {
+            // Log the error details
+            Log.e("MovieRepository", "Error: ${response.errorBody()?.string()}")
+            return emptyList()
+        }
+    }
 }
+

@@ -75,7 +75,7 @@ fun simplenav(isDarkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
         LocalViewModelStoreOwner.current!!,
         RatingsViewModelFactory(ratingsRepository) // Pass ratingsRepository to RatingsViewModelFactory
     )[RatingsViewModel::class.java]
-    AppBackground(isDarkTheme = isDarkTheme) {
+    AppBackground {
         Scaffold(
             topBar = {
                 TopAppBar(

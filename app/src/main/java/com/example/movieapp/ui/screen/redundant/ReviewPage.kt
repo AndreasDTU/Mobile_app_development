@@ -23,7 +23,7 @@ import com.example.movieapp.ui.theme.TextWhite
 
 @Composable
 fun ReviewPageUI(isDarkTheme: Boolean) {
-    AppBackground(isDarkTheme = isDarkTheme) {
+    AppBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()

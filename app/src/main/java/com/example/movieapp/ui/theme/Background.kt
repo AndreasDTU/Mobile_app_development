@@ -14,9 +14,10 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AppBackground(
-    isDarkTheme: Boolean, // Add isDarkTheme parameter
+    // Add isDarkTheme parameter
     content: @Composable () -> Unit
 ) {
+    val isDarkTheme = false
     val backgroundColors = if (isDarkTheme) {
         listOf(MediumPurple.copy(alpha = 0.95f), DarkPurple) // Gradient for dark theme
     } else {

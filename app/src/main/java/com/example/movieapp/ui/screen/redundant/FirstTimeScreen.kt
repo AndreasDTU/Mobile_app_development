@@ -24,7 +24,7 @@ import com.example.movieapp.ui.theme.TextWhite
 fun FirstTimeScreen(isDarkTheme: Boolean,  onLoginClick: () -> Unit, onGetStartedClick: () -> Unit, onThemeToggle: (Boolean) -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
-    AppBackground(isDarkTheme = isDarkTheme) {
+    AppBackground {
         Box(
             modifier = Modifier
                 .fillMaxSize(),

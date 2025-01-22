@@ -46,7 +46,7 @@ fun MyList(
     viewModel: MyListViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     isDarkTheme: Boolean
 ) {
-    AppBackground(isDarkTheme = isDarkTheme) {
+    AppBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
