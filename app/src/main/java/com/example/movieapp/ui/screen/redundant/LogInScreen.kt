@@ -24,7 +24,7 @@ fun LogInScreen(isDarkTheme: Boolean, onLoginClick: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
     // Generic App Background
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),

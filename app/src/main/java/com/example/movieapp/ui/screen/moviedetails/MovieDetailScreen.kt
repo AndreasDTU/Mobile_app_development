@@ -54,7 +54,7 @@ fun MovieDetailScreen(
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
 
-    AppBackground {
+    AppBackground (isDarkTheme = isDarkTheme) {
         if (movie != null) {
             Column(
                 modifier = Modifier

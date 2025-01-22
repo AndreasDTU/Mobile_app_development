@@ -36,7 +36,7 @@ fun SearchScreen(
     val genres = listOf("All", "Action", "Comedy", "Drama", "Horror", "Sci-Fi")
     val years = listOf("All") + (2025 downTo 1900).map { it.toString() }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text(
                 text = "Advanced Search",

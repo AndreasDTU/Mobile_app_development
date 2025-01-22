@@ -23,7 +23,7 @@ fun EditProfileScreen(
     var location by remember { mutableStateOf(userProfile.value?.location ?: "") }
     var favoriteGenre by remember { mutableStateOf(userProfile.value?.favoriteGenre ?: "") }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

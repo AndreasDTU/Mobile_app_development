@@ -49,7 +49,7 @@ fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewMod
 
 
     // Use LazyColumn for vertical scrolling
-    AppBackground {
+    AppBackground (isDarkTheme = isDarkTheme) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             // Top Movie Section
             if (topMovie != null) {

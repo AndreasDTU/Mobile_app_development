@@ -23,7 +23,7 @@ import com.example.movieapp.ui.theme.TextWhite
 fun SignUpScreen(onLoginClick: () -> Unit, isDarkTheme: Boolean) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
-    AppBackground {
+    AppBackground(isDarkTheme = isDarkTheme) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
