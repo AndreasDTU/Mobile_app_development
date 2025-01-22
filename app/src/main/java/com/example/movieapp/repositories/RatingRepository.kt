@@ -103,8 +103,7 @@ fun getRatingForMovie(movieId: Int): Rating? {
             val ratingCount = document.getDouble("ratingCount") ?: 0.0
 
             // * Calculate average rating
-            if (ratingCount == 0.0) 0f else (totalRating / ratingCount).toFloat()
-        } catch (e: Exception) {
+            if (ratingCount == 0.0) 0f else String.format("%.1f", totalRating / ratingCount).toFloat()        } catch (e: Exception) {
             0f // Return 0 if no document exists
         }
     }
