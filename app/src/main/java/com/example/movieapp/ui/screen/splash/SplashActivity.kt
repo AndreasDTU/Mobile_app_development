@@ -27,36 +27,11 @@ import kotlinx.coroutines.flow.StateFlow
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var movieViewModel: MovieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize ViewModel
-        val repository = MovieRepository(applicationContext)
-        val factory = MovieViewModelFactory(repository)
-        movieViewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
-
-        setContentView(R.layout.activity_splash)
-
-        observeDataLoading()
-    }
-
-    private fun observeDataLoading() {
-        preloadData()
-        lifecycleScope.launchWhenStarted {
-            movieViewModel.isLoading.collect { isLoading ->
-                if (!isLoading) {
-                    Log.d("splash", "Going to main screen: ")
-                    // Data has finished loading, navigate to MainScreen
-                    navigateToMainScreen()
-                }
-            }
-        }
-    }
-
-    private fun preloadData() {
-        movieViewModel.fetchall()
+        navigateToMainScreen()
     }
 
     private fun navigateToMainScreen() {
