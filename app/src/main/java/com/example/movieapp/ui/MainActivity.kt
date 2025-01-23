@@ -2,12 +2,25 @@ package com.example.movieapp.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.movieapp.R
+import com.example.movieapp.data.model.Movie
 import com.example.movieapp.nav.simplenav
+import com.example.movieapp.repositories.MovieRepository
+import com.example.movieapp.ui.screen.mainscreen.MainScreen
+import com.example.movieapp.ui.screen.mainscreen.MovieViewModel
+import com.example.movieapp.ui.screen.mainscreen.MovieViewModelFactory
 import com.example.movieapp.ui.screen.redundant.FirstTimeScreen
 import com.example.movieapp.ui.theme.MovieappTheme
 import kotlinx.coroutines.*
@@ -15,42 +28,39 @@ import com.example.movieapp.ui.screen.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Install Splash Screen
-        val splashScreen = installSplashScreen()
-
-        // Declare splash-related states
-        var isLoading by mutableStateOf(true)
-
-        // Keep splash visible until initialization is complete
-        splashScreen.setKeepOnScreenCondition { isLoading }
-
         super.onCreate(savedInstanceState)
 
-        setContent {
-            var isDarkTheme by remember {
-                mutableStateOf(true)
-            }
-                MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
-                    val context = LocalContext.current
 
-                    var mainScreenDataLoaded by remember { mutableStateOf(false) }
-                    LaunchedEffect(Unit) {
-                        // Launch both splash and main screen resource loading concurrently
-                        withContext(Dispatchers.Default) {
-                            // Simulate data loading for the Main Screen
-                            delay(1000) // Replace this with actual resource loading logic
-                            mainScreenDataLoaded = true
+        val repository = MovieRepository(
+            context = applicationContext
+        )
+        val factory = MovieViewModelFactory(repository)
+
+        val movieViewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
+
+        setContentView(R.layout.activity_splash)
+        observeDataLoading(movieViewModel)
+    }
+    private fun observeDataLoading(movieViewModel: MovieViewModel) {
+        lifecycleScope.launchWhenStarted {
+            movieViewModel.isLoading.collect { isLoading ->
+                if (!isLoading) {
+                    setContent {
+                        var isDarkTheme by remember {
+                            mutableStateOf(true)
+                        }
+
+                        MovieappTheme(darkTheme = isDarkTheme) { // Apply theme based on the state
+                            simplenav(
+                                movieViewModel = movieViewModel, // Pass shared ViewModel
+                                isDarkTheme = isDarkTheme,
+                                onThemeChange = { isDarkTheme = it }
+                            )
                         }
                     }
-                    // Finalize splash screen logic
-                    isLoading = false
 
-                     // Allow theme switching
-                    simplenav(
-                        isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it }
-                    ) // Replace with your main screen composable function
                 }
             }
+        }
     }
 }

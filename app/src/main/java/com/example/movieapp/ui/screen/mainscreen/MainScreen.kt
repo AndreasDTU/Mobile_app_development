@@ -30,12 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 
 import com.example.movieapp.data.model.Movie
 import com.example.movieapp.ui.components.AppBackground
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MovieViewModel = viewModel(), isDarkTheme: Boolean) {
+fun MainScreen(navController: NavController, viewModel: MovieViewModel, isDarkTheme: Boolean) {
 
     val topMovie = viewModel.topMovie.collectAsState().value // Observing topMovie
     val popularMovies = viewModel.popularMovies.collectAsState().value
@@ -112,12 +113,6 @@ fun SectionTitle(title: String) {
     )
 }
 
-fun Modifier.gradientOverlay(brush: Brush): Modifier = this.then(
-    Modifier.drawWithContent {
-        drawContent()
-        drawRect(brush = brush)
-    }
-)
 
 
 
@@ -168,7 +163,8 @@ fun TopMovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolea
 @Composable
 fun MovieRow(navController: NavController, movies: List<Movie>, isDarkTheme: Boolean) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(horizontal = 8.dp)
     ) {
         items(movies) { movie ->
             MovieCard(navController = navController, movie = movie, isDarkTheme = isDarkTheme)
@@ -178,11 +174,11 @@ fun MovieRow(navController: NavController, movies: List<Movie>, isDarkTheme: Boo
 
 @Composable
 fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) {
-     val cardColor = if (isDarkTheme) {
-            DarkPurple
-        } else {
-            Color(0xFFFFC0CB) // Baby pink color
-        }
+    val cardColor = if (isDarkTheme) {
+        DarkPurple
+    } else {
+        Color(0xFFFFC0CB) // Baby pink color
+    }
     Card(
         modifier = Modifier
             .size(width = 160.dp, height = 240.dp)
@@ -199,7 +195,10 @@ fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) 
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                 contentDescription = movie.title,
-                modifier = Modifier.fillMaxHeight(0.85f)
+                contentScale = ContentScale.Crop, // Ensures the image fills the space
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.85f) // Allocates 85% of the column height to the image
             )
             Text(
                 text = movie.title,
@@ -211,13 +210,5 @@ fun MovieCard(navController: NavController, movie: Movie, isDarkTheme: Boolean) 
                 maxLines = 1
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MovieappTheme {
-        MainScreen(navController = rememberNavController(), isDarkTheme = true)
     }
 }
