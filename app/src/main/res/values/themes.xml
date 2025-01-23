@@ -7,7 +7,7 @@
     </style>
 
     <!-- Splash Screen Theme -->
-    <style name="Theme.MovieApp.SplashScreen" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.MovieApp.SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Use a solid background or an image for the splash screen -->
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>

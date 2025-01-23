@@ -58,7 +58,11 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
     val sciFiMovies: StateFlow<List<Movie>> = _sciFiMovies
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+
     init {
+        fetchall()
+    }
+    fun fetchall() {
         fetchPopularMovies()
         fetchScaryMovies()
         fetchFunnyMovies()
@@ -68,7 +72,6 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         fetchRomanceMovies()
         fetchSciFiMovies()
     }
-
     private fun fetchPopularMovies() {
         viewModelScope.launch {
             _isLoading.value = true

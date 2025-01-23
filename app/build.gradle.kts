@@ -42,6 +42,8 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.androidx.core.splashscreen.v100)
     implementation (libs.androidx.material)
     implementation( libs.androidx.navigation.compose.v270)
     implementation(libs.androidx.core.ktx)
@@ -70,6 +72,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
