@@ -281,6 +281,17 @@ fun MovieDetailScreen(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = {
+                            ratingsViewModel.removeRating(id)
+                            updatedRating = 0f // Reset the local rating
+                            Toast.makeText(context, "Rating removed!", Toast.LENGTH_SHORT).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text("Remove Rating", color = TextWhite)
+                    }
                 }
             }
 
