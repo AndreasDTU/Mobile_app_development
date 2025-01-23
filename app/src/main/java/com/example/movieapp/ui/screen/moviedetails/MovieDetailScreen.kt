@@ -299,6 +299,8 @@ fun MovieDetailScreen(
                             ratingsViewModel.removeRating(id)
                             updatedRating = 0f // Reset the local rating
                             Toast.makeText(context, "Rating removed!", Toast.LENGTH_SHORT).show()
+                            // Refresh the average rating right away after removing it
+                            ratingsViewModel.loadAverageRating(id)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {

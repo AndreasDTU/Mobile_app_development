@@ -51,7 +51,11 @@ class RatingsViewModel(private val ratingsRepository: RatingsRepository) : ViewM
 
     fun removeRating(movieId: Int) {
         viewModelScope.launch {
-            ratingsRepository.removeRating(movieId)
+            val isRemoved = ratingsRepository.removeRating(movieId)
+            if (isRemoved) {
+                // Reload the average rating after removal
+                loadAverageRating(movieId) // Refresh the average rating immediately
+            }
         }
     }
 }
