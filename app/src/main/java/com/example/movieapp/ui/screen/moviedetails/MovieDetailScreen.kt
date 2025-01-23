@@ -73,11 +73,15 @@ fun MovieDetailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Movie Title
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = movie.title ?: "No Title",
+                    text = movie.title,
                     style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 8.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
+
+
                 // Like Button under the title
 
                 Row(
@@ -144,14 +148,6 @@ fun MovieDetailScreen(
                     }
                 }
 
-                // Movie Title
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = movie.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
                 // Genres
                 if (!movie.genres.isNullOrEmpty()) {
                     Text(
