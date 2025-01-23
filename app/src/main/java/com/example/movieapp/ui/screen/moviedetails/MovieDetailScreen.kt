@@ -50,9 +50,16 @@ fun MovieDetailScreen(
 
     val rating = ratingsViewModel.getRatingForMovie(id)
     val userRating = rating?.rating ?: 0f
+    val averageRating by ratingsViewModel.averageRating.collectAsState() // Observe average rating
+
 
     var updatedRating by remember { mutableStateOf(userRating) }
     val coroutineScope = rememberCoroutineScope()
+
+    // Load average rating on screen load
+    LaunchedEffect(id) {
+        ratingsViewModel.loadAverageRating(id) // Load average rating when screen opens
+    }
 
     AppBackground (isDarkTheme = isDarkTheme) {
         if (movie != null) {
@@ -81,6 +88,15 @@ fun MovieDetailScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
 
+                // Display Average Rating
+                Text(
+                    text = "Average Rating: ${averageRating?.let { String.format("%.1f", it) } ?: "Loading..."} ★",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+
 
                 // Like Button under the title
 
@@ -106,7 +122,7 @@ fun MovieDetailScreen(
                             modifier = Modifier.size(33.dp), // Adjust the icon s
                             tint = if (isLiked) LightPurple else Color.Gray,
 
-                        )
+                            )
                     }
 
                     // Watch Trailer Button
