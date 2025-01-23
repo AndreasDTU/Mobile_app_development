@@ -36,7 +36,7 @@ fun MovieItem(movie: Movie, navController: NavController) {
             modifier = Modifier.padding(8.dp)
         ) {
             // Load the movie poster image
-            val painter: Painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterpath}")
+            val painter: Painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.posterPath}")
             Image(
                 painter = painter,
                 contentDescription = movie.title,

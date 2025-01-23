@@ -9,6 +9,9 @@ local
 # Log/OS Files
 *.log
 
+# Exclude duplicate files
+* 2.kt
+
 # Android Studio generated files and folders
 captures/
 .externalNativeBuild/
@@ -33,3 +36,4 @@ google-services.json
 # Android Profiling
 *.hprof
 .DS_Store
+app/src/main/java/com/example/movieapp/nav/SimpleNav.kt

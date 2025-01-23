@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Movieapp" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Default App Theme -->
+    <style name="Theme.MovieApp" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Customize your default app theme here -->
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.MovieApp.SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Use a solid background or an image for the splash screen -->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
 </resources>
