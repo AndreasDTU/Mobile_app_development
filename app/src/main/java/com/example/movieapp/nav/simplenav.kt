@@ -132,7 +132,7 @@ fun simplenav(movieViewModel: MovieViewModel, isDarkTheme: Boolean, onThemeChang
                                     navController.navigate("SwipeableScreens") {
                                         popUpTo("SwipeableScreens") { inclusive = true }
                                     }
-                                    pagerState.animateScrollToPage(index)
+                                    pagerState.scrollToPage(index)
                                 }
                             },
                             label = { Text(page.replace("Screen", "")) },
